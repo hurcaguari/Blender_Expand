@@ -1,1 +1,46 @@
-{"blocklist": [], "data": [{"id": "Quad_Remesher", "schema_version": "1.0.0", "name": "Quad Remesher", "version": "2.80.0", "tagline": "Quad Remesher Bridges", "archive_hash": "sha256:2eb9a3cc07710cedf06a40a59edced710f6431e2a63ed5818f09b544821336fa", "archive_size": 16394690, "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/Quad_Remesher.zip", "type": "add-on", "blender_version_min": "4.2.0", "website": "https://exoside.com/quadremesher/quadremesher-troubleshooting/", "maintainer": "xz-blender", "license": ["SPDX:GPL-2.0-or-later"], "tags": ["3D View"]}, {"id": "Utilities_Gadget", "schema_version": "1.0.0", "name": "Utilities Gadget", "version": "4.2.0", "tagline": "Utilities Gadget", "archive_hash": "sha256:049d56724d4b61a0d6a2a348268ea12d4b91f4feb9ad72a50502909b9a871b2e", "archive_size": 5205, "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/Utilities_Gadget.zip", "type": "add-on", "blender_version_min": "4.2.0", "website": "https://github.com/hurcaguari/Blender-Utilities-Gadget", "maintainer": "xz-blender", "license": ["SPDX:GPL-2.0-or-later"], "tags": ["3D View"]}], "version": "v1"}
+{
+    "blocklist": [],
+    "data": [
+        {
+            "id": "Quad_Remesher",
+            "schema_version": "1.0.0",
+            "name": "Quad Remesher",
+            "version": "2.80.0",
+            "tagline": "Quad Remesher Bridges",
+            "archive_hash": "sha256:2eb9a3cc07710cedf06a40a59edced710f6431e2a63ed5818f09b544821336fa",
+            "archive_size": 16394690,
+            "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/Quad_Remesher.zip",
+            "type": "add-on",
+            "blender_version_min": "4.2.0",
+            "website": "https://exoside.com/quadremesher/quadremesher-troubleshooting/",
+            "maintainer": "xz-blender",
+            "license": [
+                "SPDX:GPL-2.0-or-later"
+            ],
+            "tags": [
+                "3D View"
+            ]
+        },
+        {
+            "id": "Utilities_Gadget",
+            "schema_version": "1.0.0",
+            "name": "Utilities Gadget",
+            "version": "4.2.0",
+            "tagline": "Utilities Gadget",
+            "archive_hash": "sha256:049d56724d4b61a0d6a2a348268ea12d4b91f4feb9ad72a50502909b9a871b2e",
+            "archive_size": 5205,
+            "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/Utilities_Gadget.zip",
+            "type": "add-on",
+            "blender_version_min": "4.2.0",
+            "website": "https://github.com/hurcaguari/Blender-Utilities-Gadget",
+            "maintainer": "xz-blender",
+            "license": [
+                "SPDX:GPL-2.0-or-later"
+            ],
+            "tags": [
+                "3D View"
+            ]
+        }
+    ],
+    "version": "v1"
+}

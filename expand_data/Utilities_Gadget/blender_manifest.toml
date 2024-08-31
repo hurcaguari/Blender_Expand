@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "Utilities_Gadget"
+name = "Utilities Gadget"
+version = "4.0.0"
+tagline = "Quad Remesher Bridges"
+maintainer = "hurcaguari"
+type = "add-on"
+tags = [ "Mesh"]
+blender_version_min = "4.2.0"
+license = [ "SPDX:GPL-2.0-or-later",]
+website = "https://github.com/hurcaguari/Blender-Utilities-Gadget"
+copyright = [ "blender"]

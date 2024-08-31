@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "Quad_Remesher"
+name = "Quad Remesher"
+version = "2.8.0"
+tagline = "Quad Remesher Bridges"
+maintainer = "Maxime"
+type = "add-on"
+tags = [ "Mesh"]
+blender_version_min = "4.2.0"
+license = [ "SPDX:GPL-2.0-or-later",]
+website = "https://exoside.com/quadremesher/quadremesher-troubleshooting"
+copyright = [ "blender"]
