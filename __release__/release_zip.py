@@ -47,7 +47,8 @@ def get_info(path):
     for line in list_text:
         if not '#' in line:
             if not '=' in line and len(line.split(':')) > 1:
-                out_dict[eval(line.split(':')[0])] = eval(''.join(line.split(':')[1:]))
+                strdata = line.split(':',1)
+                out_dict[eval(strdata[0])] = eval(strdata[1])
     return out_dict
 
 def get_data(path):
@@ -83,8 +84,8 @@ def zipDir(dirpath, outFullName):
     zip = zipfile.ZipFile(outFullName, "w", zipfile.ZIP_DEFLATED)
     for path, dirnames, filenames in walk(dirpath):
         # 去掉目标跟路径，只对目标文件夹下边的文件及文件夹进行压缩
-        fpath = path.replace(dirpath, '')
- 
+        fpath = basename(dirpath)+'\\'+path.replace(dirpath, '')
+        pass
         for filename in filenames:
             zip.write(join(path, filename), join(fpath, filename))
     zip.close()
