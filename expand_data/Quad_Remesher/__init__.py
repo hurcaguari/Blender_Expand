@@ -1,7 +1,3 @@
-# -*- coding: UTF-8 -*-
-from .iBlender_QuadRemesher import t
-# from Quad_Remesher.iBlender_QuadRemesher import t
-
 # "Quad-Remesher Bridge for Blender"
 # Author : Maxime Rouca
 #
@@ -23,341 +19,303 @@ from .iBlender_QuadRemesher import t
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
-
+from .iBlender_QuadRemesher import t
 __QR_plugin_version__ = "1.3"
 
 bl_info = {
-	#"name": "Quad Remesher "+__QR_plugin_version__+" Bridge",  # (it break the display of all plugins... in prefs>Addons)
-	"name": "Quad Remeshers",
-	"author": "Maxime",
-	"version": (1, 2, 3),	# see __QR_plugin_version__
-	"blender": (2, 8, 0),
-	#"description": "Quad Remesher "+__QR_plugin_version__+" Bridge",
-	"description": "Quad Remesher Bridges",
-	"location": "N-Panel",
-	"warning": "",
-	"doc_url": "https://exoside.com/quadremesher/quadremesher-troubleshooting/",
-	"category": "Mesh"
+    "name": "Quad Remeshers",
+    "author": "Maxime",
+    "version": (1, 3, 0),
+    "blender": (2, 80, 0),
+    "description": "Quad Remesher Bridges",
+    "location": "",
+    "warning": "",
+    "wiki_url": "",
+    "tracker_url": "https://exoside.com/quadremesher/quadremesher-troubleshooting/",
+    "category": "Mesh"
 }
-
-if 'bpy' in locals():
-    
-    from importlib import reload
-    import sys
-    for k, v in list(sys.modules.items()):
-        if k.startswith('Quad_Remesher.'):
-            reload(v)
 
 import bpy
 import bpy.props
 from rna_keymap_ui import draw_kmi
 from bl_operators.presets import AddPresetBase
 
-from .qr_operators import (QREMESHER_OT_remesh, QREMESHER_OT_reset_settings, QREMESHER_OT_license_manager, QREMESHER_OT_facemap_to_materials)
+from .qr_operators import (QREMESHER_OT_remesh, QREMESHER_OT_reset_settings, QREMESHER_OT_license_manager, QREMESHER_OT_facemap_to_materials, QREMESHER_OT_faceset_to_materials, QREMESHER_OT_online_help, QREMESHER_OT_News_LatestVer)
 
 addon_name = __name__.split(".")[0]
 
 #def addon_prefs():
-#	return bpy.context.preferences.addons[addon_name].preferences
+#    return bpy.context.preferences.addons[addon_name].preferences
 
 def paintDensityPropertyCB(self, context):
-	#try:
-	props = bpy.context.scene.qremesher
-	vertexColorSliderValue = getattr(props, 'painted_quad_density')
-	
-	#print("vertexColorSliderValue = " + str(vertexColorSliderValue) + "\n")
+    #try:
+    props = bpy.context.scene.qremesher
+    vertexColorSliderValue = getattr(props, 'painted_quad_density')
+    
+    #print("vertexColorSliderValue = " + str(vertexColorSliderValue) + "\n")
 
-	#Mapping: Slider in [0.25, 4]print
-	maxSliderValue = 4
-	minSliderValue = 0.25
-	normalizedValue = 0.0
-	if vertexColorSliderValue > 1.0:
-		normalizedValue = (vertexColorSliderValue - 1.0) / (maxSliderValue - 1.0)
-	elif vertexColorSliderValue < 1.0:
-		normalizedValue =  - ((1.0/vertexColorSliderValue) - 1.0) / ((1.0/minSliderValue) - 1.0)
+    #Mapping: Slider in [0.25, 4]
+    maxSliderValue = 4
+    minSliderValue = 0.25
+    normalizedValue = 0.0
+    if vertexColorSliderValue > 1.0:
+        normalizedValue = (vertexColorSliderValue - 1.0) / (maxSliderValue - 1.0)
+    elif vertexColorSliderValue < 1.0:
+        normalizedValue =  - ((1.0/vertexColorSliderValue) - 1.0) / ((1.0/minSliderValue) - 1.0)
 
-	if (normalizedValue > 1):
-		normalizedValue = 1
-	if (normalizedValue < -1):
-		normalizedValue = -1
+    if (normalizedValue > 1):
+        normalizedValue = 1
+    if (normalizedValue < -1):
+        normalizedValue = -1
 
-	# -- normalizedValue to color
-	r = 1.0
-	g = 1.0
-	b = 1.0
-	if normalizedValue > 0.0:
-		r = 1
-		g = 1-normalizedValue
-		b = 1-normalizedValue
-	elif normalizedValue < 0.0:
-		r = 1+normalizedValue
-		g = 1
-		b = 1
-		
-	# set the color
-	mycolor=(r, g, b)
-	bpy.data.brushes["Draw"].color = mycolor
+    # -- normalizedValue to color
+    r = 1.0
+    g = 1.0
+    b = 1.0
+    if normalizedValue > 0.0:
+        r = 1
+        g = 1-normalizedValue
+        b = 1-normalizedValue
+    elif normalizedValue < 0.0:
+        r = 1+normalizedValue
+        g = 1
+        b = 1
+        
+    # set the color
+    mycolor=(r, g, b)
+    bpy.data.brushes["Draw"].color = mycolor
 
-	#except Exception:
-	#	print("Exception: in paintDensityPropertyCB..\n")
-	return
-	
+    #except Exception:
+    #    print("Exception: in paintDensityPropertyCB..\n")
+    return
+    
+
+
 # ----- Properties container ------
 class QRSettingsPropertyGroup(bpy.types.PropertyGroup):
-	# Target Quad Count
-	target_count: bpy.props.IntProperty(name=t("Quad Count"), description=t("Set the desired number of Quads"),
-										default=5000, soft_min=100, soft_max=10000, step=20, min = 1)
+    # Target Quad Count
+    target_count: bpy.props.IntProperty(name=t("Quad Count"), description=t("Set the desired number of Quads"),
+                                        default=5000, soft_min=100, soft_max=10000, step=20, min = 1)
 
-	curvatureAdaptivness_Tooltip = t("Allows to control how quad's size locally adapts to curvatures.\nThe higher it is, the smaller the quads will be on high curvature areas.\nSet it at 0, to get uniform quads size")
-	adaptQuadCount_Tooltip = t("Adaptive Quad-Count :\nOn: Creates more polygons than asked to fit high curvatures area. \nOff(default): Respect the Target-Quad-Count more exactly.\nIt's advised to let it 'Off' to better respect the Target-Quad-Count. see the doc for more explanations. ")
-	useVertexColors_Tooltip = t("Use 'Vertex Colors' to control Quads size density.")
-	vertexColorWidget_Tooltip = t("Defines the Color to paint to control locally the desired Quad Density variations (using 'Draw' Tool, in 'Vertex Paint' mode) \n . from 0.25 => 'divide density by 4'  =  Big Quads  =  Cyan color \n . to 4  => 'multiply density by 4'  =  Small Quads  =  Red color.")
-	useMaterials_Tooltip=t("If On, QuadRemesher will use existing 'Materials' to guide the quad remeshing on Materials borders.\nMaterialIds will be maintained after remeshing.")
-	useNormals_Tooltip=t("TAKE CARE: this option is usefull in specific cases, BUT should be 'Off' by default (facetted mesh). Read the doc for more informations...")
-	useNormals_Tooltip+=t("\nIf On, QuadRemesher will use the existing 'Normals' to guide the remeshing on edge loops where the normals are split/creased.\nBy default Blenders creates mesh with normals split everywhere.\nIt usefull to enable this option only with SmoothShade + AutoSmooth enabled...\nOn smooth organic shapes, it's advised to disable it.")
-	detectHardEdges_Tooltip=t("If On, QuadRemesher will detect/compute Hard-Edges automatically based on the geometry (using a mix of edge's angles and other geometrical considerations).\nIf 'Use Normals Splitting' is checked, it's often better to uncheck 'Detect Hard Edges by angle'.\nOn smooth organic shapes, it's advised to disable it.")
-	symToolTip = t("These options allows to perform symmetrical quad remeshing. It's possible to combine all 3 symmetry axis.")
-	#symToolTip += "\nTAKE CARE: The axis are Local Coordinates axis! It's advised to set the Gizmo in 'Object' mode to better see the Local Coordinates axis."
-	hideInputTip = t("If On (default), the input object will be hidden after remeshing.")
-	
-	# Quads size settings
-	adaptive_size: bpy.props.FloatProperty(name=t("Adaptive size"),
-										 description=curvatureAdaptivness_Tooltip,
-										 default=50, min=0, max=100, step=0.5, precision=0, subtype = 'PERCENTAGE')
+    curvatureAdaptivness_Tooltip = t("Allows to control how quad's size locally adapts to curvatures.\nThe higher it is, the smaller the quads will be on high curvature areas.\nSet it at 0, to get uniform quads size")
+    adaptQuadCount_Tooltip = t("Adaptive Quad-Count :\nOn: Creates more polygons than asked to fit high curvatures area. \nOff(default): Respect the Target-Quad-Count more exactly.\nIt's advised to let it 'Off' to better respect the Target-Quad-Count. see the doc for more explanations. ")
+    useVertexColors_Tooltip = t("Use 'Vertex Colors' to control Quads size density.")
+    vertexColorWidget_Tooltip = t("Defines the Color to paint to control locally the desired Quad Density variations (using 'Draw' Tool, in 'Vertex Paint' mode) \n . from 0.25 => 'divide density by 4'  =  Big Quads  =  Cyan color \n . to 4  => 'multiply density by 4'  =  Small Quads  =  Red color.")
+    useMaterials_Tooltip= t("If On, QuadRemesher will use existing 'Materials' to guide the quad remeshing on Materials borders.\nMaterialIds will be maintained after remeshing.")
+    useNormals_Tooltip= t("TAKE CARE: this option is usefull in specific cases, BUT should be 'Off' by default (facetted mesh). Read the doc for more informations...")
+    useNormals_Tooltip+= t("\nIf On, QuadRemesher will use the existing 'Normals' to guide the remeshing on edge loops where the normals are split/creased.\nBy default Blenders creates mesh with normals split everywhere.\nIt usefull to enable this option only with SmoothShade + AutoSmooth enabled...\nOn smooth organic shapes, it's advised to disable it.")
+    detectHardEdges_Tooltip= t("If On, QuadRemesher will detect/compute Hard-Edges automatically based on the geometry (using a mix of edge's angles and other geometrical considerations).\nIf 'Use Normals Splitting' is checked, it's often better to uncheck 'Detect Hard Edges by angle'.\nOn smooth organic shapes, it's advised to disable it.")
+    symToolTip = t("These options allows to perform symmetrical quad remeshing. It's possible to combine all 3 symmetry axis.")
+    #symToolTip += "\nTAKE CARE: The axis are Local Coordinates axis! It's advised to set the Gizmo in 'Object' mode to better see the Local Coordinates axis."
+    hideInputTip = t("If On (default), the input object will be hidden after remeshing.")
+    
+    # Quads size settings
+    adaptive_size: bpy.props.FloatProperty(name=t("Adaptive size"), 
+                                         description=curvatureAdaptivness_Tooltip,
+                                         default=50, min=0, max=100, step=0.5, precision=0, subtype = 'PERCENTAGE')
 
-	adapt_quad_count: bpy.props.BoolProperty(name=t("Adapt Quad Count"), default=True, 
-											description=adaptQuadCount_Tooltip)
-	
-	use_vertex_color: bpy.props.BoolProperty(name=t("Use Vertex Color"), 
-											description=useVertexColors_Tooltip,
-											default=False)
+    adapt_quad_count: bpy.props.BoolProperty(name=t("Adapt Quad Count"), default=True, 
+                                            description=adaptQuadCount_Tooltip)
+    
+    use_vertex_color: bpy.props.BoolProperty(name=t("Use Vertex Color"), 
+                                            description=useVertexColors_Tooltip,
+                                            default=False)
 
-	painted_quad_density: bpy.props.FloatProperty(name=t("Quads density (paint)"), 
-											description=vertexColorWidget_Tooltip,
-										   default=1.0, min=0.25, max=4.0, step=0.4,
-										   update=paintDensityPropertyCB)
+    painted_quad_density: bpy.props.FloatProperty(name=t("Quads density (paint)"), 
+                                            description=vertexColorWidget_Tooltip,
+                                           default=1.0, min=0.25, max=4.0, step=0.4,
+                                           update=paintDensityPropertyCB)
 
-	# Edge loops control
-	use_materials: bpy.props.BoolProperty(name=t("Use Materials"), default=False, 
-											description = useMaterials_Tooltip)
-	use_normals: bpy.props.BoolProperty(name=t("Use Normals Splitting"), 
-										default=False,					#because when I create a sphere, all edges are 'creased', not a good idea to enable this by default...
-										description=useNormals_Tooltip)
-	autodetect_hard_edges: bpy.props.BoolProperty(name=t("Detect Hard Edges by angle"), 
-													default=True, 
-													description=detectHardEdges_Tooltip)
+    # Edge loops control
+    use_materials: bpy.props.BoolProperty(name=t("Use Materials"), default=False, 
+                                            description = useMaterials_Tooltip)
+    use_normals: bpy.props.BoolProperty(name=t("Use Normals Splitting"), 
+                                        default=False,                    #because when I create a sphere, all edges are 'creased', not a good idea to enable this by default...
+                                        description=useNormals_Tooltip)
+    autodetect_hard_edges: bpy.props.BoolProperty(name=t("Detect Hard Edges by angle"), 
+                                                    default=True, 
+                                                    description=detectHardEdges_Tooltip)
 
-	# Misc category
-	symmetry_x: bpy.props.BoolProperty(name="X", default=False, description=symToolTip)
-	symmetry_y: bpy.props.BoolProperty(name="Y", default=False, description=symToolTip)
-	symmetry_z: bpy.props.BoolProperty(name="Z", default=False, description=symToolTip)
-	
-	hide_input: bpy.props.BoolProperty(name=t("Hide Input Object"), default=True, description=hideInputTip)
-	
-	# progress bar value
-	progress_value: bpy.props.FloatProperty(default=0, subtype='PERCENTAGE', precision=1, min=0, soft_min=0, soft_max=100, max=100)
-	
+    # Misc category
+    symmetry_x: bpy.props.BoolProperty(name="X", default=False, description=symToolTip)
+    symmetry_y: bpy.props.BoolProperty(name="Y", default=False, description=symToolTip)
+    symmetry_z: bpy.props.BoolProperty(name="Z", default=False, description=symToolTip)
+    
+    hide_input: bpy.props.BoolProperty(name=t("Hide Input Object"), default=True, description=hideInputTip)
+    
+    # progress bar value
+    progress_value: bpy.props.FloatProperty(default=0, subtype='PERCENTAGE', precision=1, min=0, soft_min=0, soft_max=100, max=100)
+
+
 
 def draw_panel_content(context, layout):
-	#print("draw_panel_content called")
-	
-	props = context.scene.qremesher
-	#props = addon_prefs().props
+    #print("draw_panel_content called")
+    # NB: this function is called very often (example, quite at each mouse move in the panel...)
+    
+    props = bpy.context.scene.qremesher
+    #props = addon_prefs().props
 
-	wm = context.window_manager
+    wm = context.window_manager
 
-	# "REMESH IT" button
-#	if QREMESHER_OT_remesh.IsRemeshing:
-#		myrow = layout.row(align=True)
-#		myrow.label(text="(ESC)")
-#		myrow.prop(props, 'progress_value')
-#		#layout.prop(props, 'progress_value')
-	layout.operator(QREMESHER_OT_remesh.bl_idname)
-	layout.separator()
-		
-	# Settings
-	col = layout.column(align=True)
-	# row = col.row(align=True)
-	col.prop(props, 'target_count')
+    # "REMESH IT" button
+#    if QREMESHER_OT_remesh.IsRemeshing:
+#        myrow = layout.row(align=True)
+#        myrow.label(text="(ESC)")
+#        myrow.prop(props, 'progress_value')
+#        #layout.prop(props, 'progress_value')
+    layout.operator(QREMESHER_OT_remesh.bl_idname)
+    layout.separator()
+        
+    # Settings
+    col = layout.column(align=True)
+    # row = col.row(align=True)
+    col.prop(props, 'target_count')
 
-	col.separator()
+    col.separator()
 
-	# --- Quad Size settings ---
-	box = col.box()
-	box.label(text=t("  Quad Size Settings"))
+    # --- Quad Size settings ---
+    box = col.box()
+    box.label(text=t("  Quad Size Settings"))
 
-	box.prop(props, 'adaptive_size')
-	box.prop(props, 'adapt_quad_count')
-	box.prop(props, 'use_vertex_color')
+    box.prop(props, 'adaptive_size')
+    box.prop(props, 'adapt_quad_count')
+    box.prop(props, 'use_vertex_color')
 
-	#box.separator()
-	box.prop(props, 'painted_quad_density')
+    #box.separator()
+    box.prop(props, 'painted_quad_density')
 
-	col.separator()
+    col.separator()
 
-	# --- Quad Size settings ---
-	box = col.box()
-	box.label(text=t("  Edge Loops Control"))
+    # --- Quad Size settings ---
+    box = col.box()
+    box.label(text=t("  Edge Loops Control"))
 
-	box.prop(props, 'use_materials')
-	box.prop(props, 'use_normals')
-	box.prop(props, 'autodetect_hard_edges')
+    box.prop(props, 'use_materials')
+    box.prop(props, 'use_normals')
+    box.prop(props, 'autodetect_hard_edges')
 
-	col.separator()
+    col.separator()
 
-	# --- Misc.... ---
-	box = col.box()
-	box.label(text=t("  Misc"))
-	box.label(text=t("Symmetry:"))
-	myrow = box.row(align=True)
-	myrow.prop(props, 'symmetry_x')
-	myrow.prop(props, 'symmetry_y')
-	myrow.prop(props, 'symmetry_z')
-	box.prop(props, 'hide_input')
-	box.operator(QREMESHER_OT_reset_settings.bl_idname)
-	box.operator(QREMESHER_OT_license_manager.bl_idname)
-	box.operator(QREMESHER_OT_facemap_to_materials.bl_idname)
+    # --- Misc.... ---
+    box = col.box()
+    box.label(text=t("  Misc"))
+    box.label(text="Symmetry:")
+    myrow = box.row(align=True)
+    myrow.prop(props, 'symmetry_x')
+    myrow.prop(props, 'symmetry_y')
+    myrow.prop(props, 'symmetry_z')
+    box.prop(props, 'hide_input')
+    box.operator(QREMESHER_OT_reset_settings.bl_idname)
+    box.operator(QREMESHER_OT_license_manager.bl_idname)
+    if bpy.app.version[0] >= 4:
+        box.operator(QREMESHER_OT_faceset_to_materials.bl_idname)
+    else:
+        box.operator(QREMESHER_OT_facemap_to_materials.bl_idname)
+    box.operator(QREMESHER_OT_online_help.bl_idname)
+  
+    box.operator(QREMESHER_OT_News_LatestVer.bl_idname, text=QREMESHER_OT_News_LatestVer.getNewsButtonLabel())
 
 
 
 # Side panel ui
 class QREMESHER_PT_qremesher(bpy.types.Panel):
-	bl_space_type = 'VIEW_3D'
-	bl_region_type = 'UI'
-	bl_category = t('QuadRemesh')		# name of the VerticalTab
-	bl_label = t("Quad Remesher ")+__QR_plugin_version__
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = t('Quad Remesh')      # name of the VerticalTab
+    bl_label = t("Quad Remesher ")+__QR_plugin_version__
 
-	bl_idname = "QREMESHER_PT_qremesher"
+    bl_idname = "QREMESHER_PT_qremesher"
 
-	# bl_options = {'DEFAULT_CLOSED'}
+    # bl_options = {'DEFAULT_CLOSED'}
 
-	@classmethod
-	def poll(cls, context):
-		return True
-
-	def draw(self, context):
-		# print('测试输出',__package__.split(".")[0])
-		# print(__package__)
-		addon_prefs = bpy.context.preferences.addons['Quad_Remesher'].preferences
-
-		layout = self.layout
-		box = layout.box()
-		box.prop(addon_prefs, "language", expand=False)
-
-		draw_panel_content(context, self.layout)
-
-
-
-class iBlender(bpy.types.AddonPreferences):
-
-    bl_idname = 'Quad_Remesher'
-
-    def update_language(self, context):
-        bpy.context.preferences.view.language = self.language
-        if bpy.context.preferences.view.language != "en_US":
-            bpy.context.preferences.view.use_translate_new_dataname = False
-        bpy.ops.script.reload()
-
-    language: bpy.props.EnumProperty(
-        name=t("Language"),
-        description=t("Language Description"),
-        default= bpy.app.translations.locale if bpy.app.translations.locale in ["zh_HANS", "zh_HANT"] else "en_US",
-        update=update_language,
-        items=[
-            ("en_US", "English", "English"),
-            ("zh_HANS", "简体中文", "Simplified Chinese"),
-            ("zh_HANT", "繁體中文", "Traditional Chinese")
-        ],
-    )
+    @classmethod
+    def poll(cls, context):
+        return True
 
     def draw(self, context):
-        
-
-        layout = self.layout
-        box = layout.box()       
-
-        box.prop(self, "language")
-
-        box.label(text=t("Translation is in progress. Whole text isn't translated."))
+        draw_panel_content(context, self.layout)
 
 
 # Scene settings subpanel
 '''
 class QREMESHER_PT_qremesher_setting_panel(bpy.types.Panel):
-	bl_space_type = 'VIEW_3D'
-	bl_region_type = 'UI'
-	bl_category = 'QRemesher'
-	bl_label = t("Settings")
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'QRemesher'
+    bl_label = "Settings"
 
-	bl_idname = "QREMESHER_PT_qremesher_setting_panel"
-	bl_parent_id = "QREMESHER_PT_qremesher"   # NB: ca suffit a ajouter ce sub panel dans le panel QREMESHER_PT_qremesher
+    bl_idname = "QREMESHER_PT_qremesher_setting_panel"
+    bl_parent_id = "QREMESHER_PT_qremesher"   # NB: ca suffit a ajouter ce sub panel dans le panel QREMESHER_PT_qremesher
 
-	# bl_options = {'DEFAULT_CLOSED'}
+    # bl_options = {'DEFAULT_CLOSED'}
 
-	@classmethod
-	def poll(cls, context):
-		return True
+    @classmethod
+    def poll(cls, context):
+        return True
 
-	def draw(self, context):
+    def draw(self, context):
 
-		self.layout.operator(QREMESHER_OT_reset_settings.bl_idname)
+        self.layout.operator(QREMESHER_OT_reset_settings.bl_idname)
 
-		self.layout.separator()
+        self.layout.separator()
 
-		#draw_panel_content(context, self.layout)
+        #draw_panel_content(context, self.layout)
 '''
 
 
-classes = [
-	iBlender,
-	QRSettingsPropertyGroup,
+classes = [QRSettingsPropertyGroup,
 
-	QREMESHER_PT_qremesher,
-	#QREMESHER_PT_qremesher_setting_panel,
+           QREMESHER_PT_qremesher,
+           #QREMESHER_PT_qremesher_setting_panel,
 
-	QREMESHER_OT_remesh,
-	QREMESHER_OT_reset_settings,
-	QREMESHER_OT_license_manager,
-	QREMESHER_OT_facemap_to_materials,
-	]
+           QREMESHER_OT_remesh,
+           QREMESHER_OT_reset_settings,
+           QREMESHER_OT_license_manager,
+           QREMESHER_OT_facemap_to_materials, # Blender 3.x
+           QREMESHER_OT_faceset_to_materials, # Blender 4.x
+           QREMESHER_OT_online_help,
+           QREMESHER_OT_News_LatestVer,
+           ]
 addon_keymaps = []
 
 
 def hotkeys():
-	wm = bpy.context.window_manager
-	kc = wm.keyconfigs.addon
+    wm = bpy.context.window_manager
+    kc = wm.keyconfigs.addon
 
-	if kc:
-		if '3D View' not in kc.keymaps:
-			km_view3d = kc.keymaps.new('3D View', space_type='VIEW_3D', region_type='WINDOW')
-		else:
-			km_view3d = kc.keymaps['3D View']
+    if kc:
+        if '3D View' not in kc.keymaps:
+            km_view3d = kc.keymaps.new('3D View', space_type='VIEW_3D', region_type='WINDOW')
+        else:
+            km_view3d = kc.keymaps['3D View']
 
-		kmi = km_view3d.keymap_items.new(QREMESHER_OT_remesh.bl_idname, head=True, type='R', value='PRESS',
-										 ctrl=True, alt=True)
+        kmi = km_view3d.keymap_items.new(QREMESHER_OT_remesh.bl_idname, head=True, type='R', value='PRESS',
+                                         ctrl=True, alt=True)
 
-		addon_keymaps.append((km_view3d, kmi))
+        addon_keymaps.append((km_view3d, kmi))
 
 
 def register():
-	for cls in classes:
-		bpy.utils.register_class(cls)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
-	bpy.types.Scene.qremesher = bpy.props.PointerProperty(type=QRSettingsPropertyGroup)
+    bpy.types.Scene.qremesher = bpy.props.PointerProperty(type=QRSettingsPropertyGroup)
+    QREMESHER_OT_News_LatestVer.readNews()
 
-	hotkeys()
+    hotkeys()
 
 
 def unregister():
-	for cls in classes:
-		bpy.utils.unregister_class(cls)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
-	del bpy.types.Scene.qremesher
+    del bpy.types.Scene.qremesher
 
-	wm = bpy.context.window_manager
-	kc = wm.keyconfigs.addon
+    wm = bpy.context.window_manager
+    kc = wm.keyconfigs.addon
 
-	if kc:
-		for km, kmi in addon_keymaps:
-			km.keymap_items.remove(kmi)
-	addon_keymaps.clear()
+    if kc:
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
+

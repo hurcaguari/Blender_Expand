@@ -1,7 +1,3 @@
-# -*- coding: UTF-8 -*-
-from .iBlender_QuadRemesher import t
-# from Quad_Remesher.iBlender_QuadRemesher import t
-
 # "Quad-Remesher Bridge for Blender"
 # Author : Maxime Rouca
 #
@@ -34,12 +30,12 @@ import shutil
 import tempfile
 import time
 
+from .iBlender_QuadRemesher import t
 # --- global variables ---
 verboseDebug = False
 g_enableTiming = False
 
-__QR_plugin_version__ = "1.2"
-
+__QR_plugin_version__ = "1.3"
 
 
 # ------------------- Check Progress ---------------------
@@ -94,7 +90,7 @@ class QRCheckProgressData:
                     return 0, "", None   # simply wait more
                 elif CurTimeFromStart < 40 :  # after 3 seconds without progressFile...
                     if (self.RemeshingProcess != None and self.RemeshingProcess.poll() != None):
-                        ProgressText = t("Remeshing Failed! (Returned without ProgressFile - 0)")
+                        ProgressText = "Remeshing Failed! (Returned without ProgressFile - 0)"
                         return -4, ProgressText, None
                     return 0, "", None
                 else:  # after 40 seconds without progressFile... => return error !
@@ -128,7 +124,7 @@ class QRCheckProgressData:
                 if (self.CheckProgressCounter > 5 and self.CheckProgressCounter % 4 == 0): # only every 4 timers (~1 sec)
                     #if (RemeshingProcess.poll() != None):
                     if (self.RemeshingProcess != None and self.RemeshingProcess.poll() != None):
-                        ProgressText = t("Remeshing Failed! (Stopped without result)")
+                        ProgressText = "Remeshing Failed! (Stopped without result)"
                         return -3, ProgressText, 0
 
                 # computing...            
@@ -144,11 +140,11 @@ class QRCheckProgressData:
         if (self.CheckProgressCounter > 8 and self.CheckProgressCounter % 4 == 0):
             if (self.RemeshingProcess != None and self.RemeshingProcess.poll() != None):
                 ProgressValueFloat = -4    # this means that the remesher crashed
-                ProgressText = t("Remeshing Failed! (Returned without ProgressFile)")
+                ProgressText = "Remeshing Failed! (Returned without ProgressFile)"
                 return ProgressValueFloat, ProgressText, None
 
         ProgressValueFloat = -11
-        ProgressText = t("Remeshing Failed! (Bad ProgressFile Data)")
+        ProgressText = "Remeshing Failed! (Bad ProgressFile Data)"
         return ProgressValueFloat, ProgressText, None
 
 
@@ -178,19 +174,20 @@ def unixifyPath(path):
     path = path.replace('\\', '/')
     return path
 
+def getHostAppVer():
+    return str(bpy.app.version[0]) + "." + str(bpy.app.version[1])
+
 def getQREngineFolder():
     isMacOS = (platform.system()=="Darwin") or (platform.system()=="macosx")
     isLinux = (platform.system()=="Linux")
     if (isMacOS):
-        engineFolder = "/Users/Shared/Exoside/QuadRemesher/Datas_Blender/QuadRemesherEngine"
+        engineFolder = "/Users/Shared/Exoside/QuadRemesher/Datas_Blender/QuadRemesherEngine_"+__QR_plugin_version__
     elif isLinux:
-        engineFolder = os.path.expanduser("~/.local/share/Exoside/QuadRemesher/Datas_Blender/QuadRemesherEngine")
-        #engineFolder = "/home/maxime/.local/share/Exoside/QuadRemesher/Datas_Blender/QuadRemesherEngine_1.2"
+        engineFolder = os.path.expanduser("~/.local/share/Exoside/QuadRemesher/Datas_Blender/QuadRemesherEngine_"+__QR_plugin_version__)
     else:
         #appData = os.getenv('APPDATA')  windows ... UserName/../Roaming... 
         appData = os.getenv('ALLUSERSPROFILE')  # on windows : C:\Users\All Users == C:\ProgramData\
-        engineFolder = os.path.join(os.path.dirname(__file__), 'QuadRemesherEngine')
-        # engineFolder = os.path.join(appData, "Exoside/QuadRemesher/Datas_Blender/QuadRemesherEngine_1.2")
+        engineFolder = os.path.join(appData, "Exoside/QuadRemesher/Datas_Blender/QuadRemesherEngine_"+__QR_plugin_version__)
     return engineFolder
     
 def getEnginePath():
@@ -213,7 +210,13 @@ def debug_returnLoadRetopoTime(startLoadRetopoTime, endLoadRetopoTime):
         return None
 
 def export_selected_mesh_fbx(filepath):
-    bpy.ops.export_scene.fbx(filepath=filepath, use_selection=True, bake_anim=False)
+    try:
+        bpy.ops.export_scene.fbx(filepath=filepath, use_selection=True, bake_anim=False)
+    except Exception:
+        import traceback
+        print("fbx export exception: " + str(traceback.format_exc()) + "\n")
+        return False
+    return True
 
 '''
 def export_selected_mesh_extra_maps(filepath, o):
@@ -295,9 +298,9 @@ def fixExecutableMode(path):
 # NB: enginePath can be either xremesh or xrLicenseManager
 def InstallQuadRemesherEngineIfNeeded(op, context, enginePath):
     if not os.path.exists(enginePath):
-        console_print(t("Engine not found: downloading and installing...({})").format(enginePath))
+        console_print("Engine not found: downloading and installing...("+enginePath+")")
         
-        op.report({'WARNING'}, t("Downloading QuadRemesher Engine..."))
+        op.report({'WARNING'}, "Downloading QuadRemesher Engine...")
         bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=2)
 
         # test invoke
@@ -319,13 +322,13 @@ def InstallQuadRemesherEngineIfNeeded(op, context, enginePath):
         urlList = []
         if isMacOSX:
             #NB: https fails on macOS
-            urlList.append("http://exoside.com/quadremesherdata/quad_remesher_engine_1.2_macOS.zip")
+            urlList.append("http://exoside.com/quadremesherdata/quad_remesher_engine_"+__QR_plugin_version__+"_macOS.zip")
         elif isLinux :
-            urlList.append("http://exoside.com/quadremesherdata/quad_remesher_engine_1.2_linux.zip")
+            urlList.append("http://exoside.com/quadremesherdata/quad_remesher_engine_"+__QR_plugin_version__+"_linux.zip")
         else:
-            urlList.append("https://exoside.com/quadremesherdata/quad_remesher_engine_1.2_win.zip")
-            urlList.append("http://exoside.com/quadremesherdata/quad_remesher_engine_1.2_win.zip")
-            urlList.append("http://www.exoside.com/quadremesherdata/quad_remesher_engine_1.2_win.zip")
+            urlList.append("https://exoside.com/quadremesherdata/quad_remesher_engine_"+__QR_plugin_version__+"_win.zip")
+            urlList.append("http://exoside.com/quadremesherdata/quad_remesher_engine_"+__QR_plugin_version__+"_win.zip")
+            urlList.append("http://www.exoside.com/quadremesherdata/quad_remesher_engine_"+__QR_plugin_version__+"_win.zip")
 
         downloadOK = False
         downloadExceptionCount = 0
@@ -341,49 +344,55 @@ def InstallQuadRemesherEngineIfNeeded(op, context, enginePath):
                     break
             except Exception:
                 import traceback
-                downloadExceptionText = t("{} Install remesher Engine ERROR: Download Failed (exception) {}\n").format(downloadExceptionText, str(traceback.format_exc()))
+                downloadExceptionText = downloadExceptionText + "Install remesher Engine ERROR: Download Failed (exception) " + str(traceback.format_exc()) + "\n"
                 downloadExceptionCount = downloadExceptionCount + 1
                 #console_print("Install remesher Engine ERROR: Download Failed (exception) " + str(traceback.format_exc()) + "\n")
 
         if downloadOK == False:
             if downloadExceptionCount > 0:
                 console_print(downloadExceptionText)
-                helpLinkStr = t("\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v={}&id=DLengine2)").format(__QR_plugin_version__)
-                op.report({'ERROR'}, t("Failed to download Quad Remesher Engine (exception).") + helpLinkStr)
+                helpLinkStr = "\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v="+__QR_plugin_version__+"&id=DLengine2)"
+                op.report({'ERROR'}, "Failed to download Quad Remesher Engine (exception)." + helpLinkStr)
                 return 2
             if not os.path.exists(zip_file_name):
-                helpLinkStr = t("\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v={}&id=DLengine)").format(__QR_plugin_version__)
-                op.report({'ERROR'}, t("Failed to download Quad Remesher Engine.") + helpLinkStr)
+                helpLinkStr = "\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v="+__QR_plugin_version__+"&id=DLengine)"
+                op.report({'ERROR'}, "Failed to download Quad Remesher Engine." + helpLinkStr)
                 return 2
             
         # then unzip
-        op.report({'WARNING'}, t("unzipping QuadRemesher Engine..."))
+        op.report({'WARNING'}, "unzipping QuadRemesher Engine...")
         bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
         try:
-            from zipfile import ZipFile
-            with ZipFile(zip_file_name, 'r') as zip: 
-                zip.extractall(engineFolder) 
-                #return 1
+            if isMacOSX:
+                # use command line because pythons unzip is losing attributes + from Ventura, macOS says that xrLicenseManager is damaged if unzipped from python
+                #print('unzip "%s" -d "%s"' % (zip_file_name,engineFolder))
+                os.system('unzip "%s" -d "%s"' % (zip_file_name,engineFolder))
             
-            #return 1
+            else: # Win + Linux
+                from zipfile import ZipFile
+                with ZipFile(zip_file_name, 'r') as zip: 
+                    zip.extractall(engineFolder) 
+                    #return 1
+            
+                #return 1
+                # fix executable mode:
+                if isMacOSX:
+                    fixExecutableMode(os.path.join(engineFolder, 'xremesh'))
+                    fixExecutableMode(os.path.join(engineFolder, 'xrLicenseManager.app/Contents/MacOS/xrLicenseManager'))
+                elif isLinux:
+                    fixExecutableMode(os.path.join(engineFolder, 'xremesh'))
+                    fixExecutableMode(os.path.join(engineFolder, 'xrLicenseManager'))
+
         except Exception:
             import traceback
-            console_print("Install remesher Engine ERROR: Unzip Failed{}\n".format(str(traceback.format_exc())))
-            helpLinkStr = t("\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v={}&id=unzipEngine)").format(__QR_plugin_version__)
-            op.report({'ERROR'}, t("Failed to unzip Quad Remesher Engine.") + helpLinkStr)
+            console_print("Install remesher Engine ERROR: Unzip Failed" + str(traceback.format_exc()) + "\n")
+            helpLinkStr = "\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v="+__QR_plugin_version__+"&id=unzipEngine)"
+            op.report({'ERROR'}, "Failed to unzip Quad Remesher Engine." + helpLinkStr)
             return 3
             
         #delete zip
         os.remove(zip_file_name)
         
-        # fix executable mode:
-        if isMacOSX:
-            fixExecutableMode(os.path.join(engineFolder, 'xremesh'))
-            fixExecutableMode(os.path.join(engineFolder, 'xrLicenseManager.app/Contents/MacOS/xrLicenseManager'))
-        elif isLinux:
-            fixExecutableMode(os.path.join(engineFolder, 'xremesh'))
-            fixExecutableMode(os.path.join(engineFolder, 'xrLicenseManager'))
-
         return 1
             
     return 0
@@ -398,7 +407,7 @@ def setSelectedObjectShadeFlat(context):
             f.use_smooth = False
     except Exception:
         import traceback
-        console_print(t("setSelectedObjectShadeFlat exception{}\n").format(str(traceback.format_exc())))
+        console_print(t("setSelectedObjectShadeFlat exception") + str(traceback.format_exc()) + "\n")
 
 def set_retopo_materials_and_symmetry(objsrc):
     retopo = bpy.context.view_layer.objects.active
@@ -418,9 +427,9 @@ def set_retopo_materials_and_symmetry(objsrc):
                 retopo.material_slots[i].material = mats[i].material
         else:
             if len(mats) != 0:
-                console_print(t("warning: original Materials NOT transfered to retopo !"))
+                console_print("warning: original Materials NOT transfered to retopo !")
     except Exception:
-        console_print(t("EXCEPTIN material_slots"))
+        console_print("EXCEPTIN material_slots")
         a=0 # protect from error messages if material_slots was not existing in previous version of Blender ... (exists in 2.83)
 
 
@@ -452,11 +461,11 @@ def doRemeshing_Start(theOp, context) :
     # check selection        
     sel_objects = context.selected_objects
     if len(sel_objects) != 1:
-        theOp.report({'ERROR'}, t("You must select one and only one object."))
+        theOp.report({'ERROR'}, "You must select one and only one object.")
         return 
     theOp.the_input_object = sel_objects[0]
     if theOp.the_input_object.type != 'MESH':
-        theOp.report({'ERROR'}, t("You must select one MESH object !"))
+        theOp.report({'ERROR'}, "You must select one MESH object !")
         return 
         
     
@@ -499,7 +508,7 @@ def doRemeshing_Start(theOp, context) :
     # --------------- install QuadRemesher Engine if needed -------------------
     installRes = InstallQuadRemesherEngineIfNeeded(theOp, context, enginePath)
     if installRes == 1:  # 1 = Installed 
-        theOp.report({'WARNING'}, t("QuadRemesher Engine has been downloaded and installed, please click <<Remesh It>> again..."))
+        theOp.report({'WARNING'}, "QuadRemesher Engine has been downloaded and installed, please click <<Remesh It>> again...")
         #theOp.NeedReCallStartFromTimer = True
         #return
     if installRes >= 2:  # 2 or 3 or 4
@@ -518,7 +527,9 @@ def doRemeshing_Start(theOp, context) :
         print("remove file error: " + str(traceback.format_exc()) + "\n")
 
     # 1.1 - Export Selected Mesh
-    export_selected_mesh_fbx(inputFilename)
+    if export_selected_mesh_fbx(inputFilename) == False:
+        theOp.report({'ERROR'}, "Cannot use FBX exporter. Please make sure the FBX format addon is enabled.")
+        return 
     #export_selected_mesh_extra_maps(inputFilename_extraMaps, theOp.the_input_object)
 
     if (verboseDebug): print(" inputFile exported!")
@@ -527,6 +538,7 @@ def doRemeshing_Start(theOp, context) :
     # 1.2 - Write settings file
     settings_file = open(settingsFilename, "w")
     settings_file.write('HostApp=Blender\n')
+    settings_file.write('HostAppVer=%s\n' % bpy.app.version_string)
     settings_file.write('FileIn="%s"\n' % inputFilename)
     #settings_file.write('FileIn2="%s"\n' % inputFilename_extraMaps)
     settings_file.write('FileOut="%s"\n' % theOp.retopoFilename)
@@ -573,13 +585,13 @@ def doRemeshing_Start(theOp, context) :
     except Exception:
         import traceback
         print("Execute remesher ERROR: " + str(traceback.format_exc()) + "\n")
-        helpLinkStr = t("\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v={}&id=engExec)").format(__QR_plugin_version__)
-        theOp.report({'ERROR'}, t("Cannot execute the remesher engine....") + helpLinkStr)
+        helpLinkStr = "\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v="+__QR_plugin_version__+"&id=engExec)"
+        theOp.report({'ERROR'}, "Cannot execute the remesher engine...." + helpLinkStr)
         return 
     
     theOp.IsRemeshing = True
         
-    if (verboseDebug): console_print(t("theOp.progressData.RemeshingProcess: {}\n").format(str(theOp.progressData.RemeshingProcess)))
+    if (verboseDebug): console_print(t("theOp.progressData.RemeshingProcess: ") + str(theOp.progressData.RemeshingProcess) + "\n")
     
     return
         
@@ -616,7 +628,7 @@ def doRemeshing_Finish(theOp, context) :
             # add warning for "Use Normals Splitting":
             if inputUseSmoothShading == False:
                 if getattr(props, 'use_normals'):
-                    theOp.report({'WARNING'}, t("Remeshing with 'Use Normals Splitting' enabled and with 'Flat Shading' generally leads to poor results. You probably should switch one of them."))
+                    theOp.report({'WARNING'}, "Remeshing with 'Use Normals Splitting' enabled and with 'Flat Shading' generally leads to poor results. You probably should switch one of them.")
             if (verboseDebug): print ("poly[0] : use_smooth = %d" % (inputUseSmoothShading))
     except Exception:
         #import traceback
@@ -647,7 +659,7 @@ def doRemeshing_Finish(theOp, context) :
 '''
 class QREMESHER_OT_downloadEngine(bpy.types.Operator):
     bl_idname = "qremesher.download_engine"
-    bl_label = t("Download and install QuadRemesher Engine ?")
+    bl_label = "Download and install QuadRemesher Engine ?"
     bl_description = "Download and install QuadRemesher Engine ..."
     bl_options = {'REGISTER'}
 
@@ -674,8 +686,8 @@ class QREMESHER_OT_downloadEngine(bpy.types.Operator):
 # --------------- Main Operator called when <<Remesh It>> is pressed! -------
 class QREMESHER_OT_remesh(bpy.types.Operator):
     bl_idname = "qremesher.remesh"
-    bl_label = t("<<  REMESH IT >> ")
-    bl_description = t("Remesh the selected mesh.")
+    bl_label = "<<  REMESH IT >> "
+    bl_description = "Remesh the selected mesh.\n It also downloads and installs the RemesherEngine the 1st time, if needed."
     bl_options = {'REGISTER', 'UNDO'}
 
     # class variables
@@ -683,7 +695,7 @@ class QREMESHER_OT_remesh(bpy.types.Operator):
     retopoFilename = ""
     Aborted = False
     progressData = QRCheckProgressData()
-    print('测试显示',t('<<  REMESH IT >> '))
+    
     @classmethod
     def poll(self, context):
         return True
@@ -716,7 +728,7 @@ class QREMESHER_OT_remesh(bpy.types.Operator):
     def modal(self, context, event):  
         #console_print("modal called.   event.type="+str(event.type))
         if event.type in {'ESC'}:
-            self.report({'INFO'}, t("Remeshing CANCELLED !"))
+            self.report({'INFO'}, "Remeshing CANCELLED !")
             self.onEndingOperator(context, False)
             return {'CANCELLED'}
             
@@ -726,8 +738,8 @@ class QREMESHER_OT_remesh(bpy.types.Operator):
             
             # Choose: RUNNING/FINISHED/CANCELLED
             if ProgressValueFloat == -10:   # no progress file found
-                console_print(t(' ERROR : no progressFile after 40s....'))
-                self.report({'ERROR'}, t("Remeshing FAILED !"))
+                console_print(' ERROR : no progressFile after 40s....')
+                self.report({'ERROR'}, "Remeshing FAILED !")
                 self.onEndingOperator(context, False)
                 return {'FINISHED'}
                     
@@ -738,19 +750,19 @@ class QREMESHER_OT_remesh(bpy.types.Operator):
                 return {'FINISHED'}
                 
             elif ProgressValueFloat < 0:    # error returned
-                console_print(t(' RETURNING ERROR.... ProgressValueFloat=')+str(ProgressValueFloat))
+                console_print(' RETURNING ERROR.... ProgressValueFloat='+str(ProgressValueFloat))
                 self.onEndingOperator(context, False)
                 if (ProgressText != None and len(ProgressText)>0):
                     self.report({'ERROR'}, ProgressText)
                 else:
-                    self.report({'ERROR'}, t("Remeshing FAILED !"))
+                    self.report({'ERROR'}, "Remeshing FAILED !")
                 return {'FINISHED'}
                 
             elif ProgressValueFloat == 2:   # SUCCESS -> import the result
                 doRemeshing_Finish(self, context)
                 
                 self.onEndingOperator(context, True)
-                self.report({'INFO'}, t("Remeshing Succeded !"))
+                self.report({'INFO'}, "Remeshing Succeded !")
                 
                 return {'FINISHED'}
             
@@ -758,9 +770,9 @@ class QREMESHER_OT_remesh(bpy.types.Operator):
             if ProgressValueFloat >= 0 and ProgressValueFloat <= 1.0:
                 newPBarValue = int( (99.0 * ProgressValueFloat + 1.0) )
                 #console_print('ProgressValueFloat=%s   newPBarValue=%s' % (str(ProgressValueFloat),str(newPBarValue)))
-                self.report({'INFO'}, t("Remeshing progress:{} % (ESC=Abort)").format(str(newPBarValue)))
+                self.report({'INFO'}, "Remeshing progress:"+str(newPBarValue)+"% (ESC=Abort)")
             else:
-                self.report({'INFO'}, t("Remeshing progress... (ESC=Abort)"))
+                self.report({'INFO'}, "Remeshing progress... (ESC=Abort)")
 
             return {'RUNNING_MODAL'}
             
@@ -783,11 +795,27 @@ class QREMESHER_OT_remesh(bpy.types.Operator):
         return {'CANCELLED'}
 
 
+def getLicenseManagerPath():
+    try:
+        engineFolder = getQREngineFolder()
+        #script_folder = os.path.dirname(os.path.realpath(__file__))
+        isMacOSX = (platform.system()=="Darwin") or (platform.system()=="macosx")
+        isLinux = (platform.system()=="Linux")
+        if isMacOSX :
+            licenseManagerPath = os.path.join(engineFolder, "xrLicenseManager.app/Contents/MacOS/xrLicenseManager")
+        elif isLinux :
+            licenseManagerPath = os.path.join(engineFolder, "xrLicenseManager")
+        else:
+            licenseManagerPath = os.path.join(engineFolder, "xrLicenseManager.exe")
+        licenseManagerPath = unixifyPath(licenseManagerPath)
+    except Exception:
+        licenseManagerPath = None
+    return licenseManagerPath
 
 # -------------- License Manager button Operator ----------------
 class QREMESHER_OT_license_manager(bpy.types.Operator):
     bl_idname = "qremesher.license_manager"
-    bl_label = t("License Manager")
+    bl_label = "License Manager"
     bl_description = "Launches the License manager"
     bl_options = {'REGISTER'}
 
@@ -797,33 +825,22 @@ class QREMESHER_OT_license_manager(bpy.types.Operator):
 
     def execute(self, context):
         # 1 - get license manager path
-        try:
-            engineFolder = getQREngineFolder()
-            #script_folder = os.path.dirname(os.path.realpath(__file__))
-            isMacOSX = (platform.system()=="Darwin") or (platform.system()=="macosx")
-            isLinux = (platform.system()=="Linux")
-            if isMacOSX :
-                licenseManagerPath = os.path.join(engineFolder, "xrLicenseManager.app/Contents/MacOS/xrLicenseManager")
-            elif isLinux :
-                licenseManagerPath = os.path.join(engineFolder, "xrLicenseManager")
-            else:
-                licenseManagerPath = os.path.join(engineFolder, "xrLicenseManager.exe")
-            licenseManagerPath = unixifyPath(licenseManagerPath)
-        except Exception:
-            helpLinkStr = t("\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v={}&id=LicMgrPath)").format(__QR_plugin_version__)
-            self.report({'ERROR'}, t("Error while settings LicenseManager path!")+helpLinkStr)
+        licenseManagerPath = getLicenseManagerPath()
+        if licenseManagerPath == None:
+            helpLinkStr = "\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v="+__QR_plugin_version__+"&id=LicMgrPath)"
+            self.report({'ERROR'}, "Error while settings LicenseManager path!"+helpLinkStr)
             return {'CANCELLED'}
         
         # 2 - launch licenseManager
-        # InstallQuadRemesherEngineIfNeeded(self, context, licenseManagerPath)
+        InstallQuadRemesherEngineIfNeeded(self, context, licenseManagerPath)
 
         #console_print("Launching LicenseManager : " + str(licenseManagerPath))
         try:
-            subprocess.Popen([licenseManagerPath, "-hostApp", "Blender"])
+            subprocess.Popen([licenseManagerPath, "-hostApp", "Blender", "-haVer", getHostAppVer()])
         except Exception:
             #console_print("ERROR : " + str(licenseManagerPath))
-            helpLinkStr = t("\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v={}&id=LicMgrLaunch)").format(__QR_plugin_version__)
-            self.report({'ERROR'}, t("Exception: while launching LicenseManager.... ('{}' {})".format(str(licenseManagerPath), helpLinkStr)))
+            helpLinkStr = "\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v="+__QR_plugin_version__+"&id=LicMgrLaunch)"
+            self.report({'ERROR'}, "Exception: while launching LicenseManager.... (" + str(licenseManagerPath) + ")" + helpLinkStr)
             return {'CANCELLED'}
 
         #console_print("OK : " + str(licenseManagerPath))
@@ -833,8 +850,8 @@ class QREMESHER_OT_license_manager(bpy.types.Operator):
 # -------------- Reset Setting button Operator ----------------
 class QREMESHER_OT_reset_settings(bpy.types.Operator):
     bl_idname = "qremesher.reset_scene_prefs"
-    bl_label = t("Reset Settings")
-    bl_description = t("Reset settings to default values")
+    bl_label = "Reset Settings"
+    bl_description = "Reset settings to default values"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -863,7 +880,7 @@ class QREMESHER_OT_reset_settings(bpy.types.Operator):
         return {'FINISHED'}
 
 
-# -------------- FaceMap -> Material  button Operator ----------------
+# -------------- FaceMap -> Material  button Operator (Blender 3.x) ----------------
 class QREMESHER_OT_facemap_to_materials(bpy.types.Operator):
     bl_idname = "qremesher.facemap_to_materials"
     bl_label = t("Face Maps 2 Materials")
@@ -881,7 +898,7 @@ class QREMESHER_OT_facemap_to_materials(bpy.types.Operator):
     
         sel_objects = context.selected_objects
         if len(sel_objects) != 1:
-            self.report({'ERROR'}, t("You must select one and only one object."))
+            self.report({'ERROR'}, "You must select one and only one object.")
             return {'FINISHED'}
         
         o = sel_objects[0]
@@ -893,6 +910,7 @@ class QREMESHER_OT_facemap_to_materials(bpy.types.Operator):
         for f in o.data.polygons:
             f.material_index = 0
 
+        ###  fsAttrib = o.data.attributes['.sculpt_face_set']
         matIndex = 0
         mapCount = len(o.face_maps)
         for fm in o.face_maps:
@@ -932,10 +950,224 @@ class QREMESHER_OT_facemap_to_materials(bpy.types.Operator):
                     #print("face[%d] set material = %d" % (f.index, matIndex))
                     f.material_index = matIndex
             
-            
         # CHECKING:
         #for f in o.data.polygons: print(str(f.material_index))
         
         return {'FINISHED'}
         
+
+
+# -------------- FaceSet -> Material  button Operator ----------------
+class QREMESHER_OT_faceset_to_materials(bpy.types.Operator):
+    bl_idname = "qremesher.faceset_to_materials"
+    bl_label = t("Face Sets 2 Materials")
+    bl_description = t("Assign new Materials to each Face Set (using random colors) so that:\n- FaceSets can be used with 'Use Materials' option.\n- FaceSets can be easily visualized.")
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(self, context):
+        return True
+
+    def execute(self, context):
+        # NB: FOUND NOT ACCESS TO FaceMaps (neither from mesh nor from mesh) -> need to select them and read selection...
+        
+        import random
+    
+        sel_objects = context.selected_objects
+        if len(sel_objects) != 1:
+            self.report({'ERROR'}, "You must select one and only one object.")
+            return {'FINISHED'}
+        
+        o = sel_objects[0]
+        #print ("%d face maps!" % len(o.face_maps))
+        
+        #test: export_selected_mesh_extra_maps("", o)
+
+        # reset all materialIds:
+        for f in o.data.polygons:
+            f.material_index = 0
+
+        ###  fsAttrib = o.data.attributes['.sculpt_face_set']
+        print("Blender 4!")
+        # set materialId for selected faces:
+        # NB: in Edit Mode ".select" returns the selected status when entering the EditMode !!! ????!!!!!
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+        try:
+            fsAttrib = o.data.attributes['.sculpt_face_set']
+        except Exception: # no FaceSets in the mesh
+            return {'FINISHED'}
+        #print("fsAttrib = %s" % str(fsAttrib))
+
+        fsMax = -1
+        for fs in fsAttrib.data:
+            if fs.value > fsMax:
+                fsMax = fs.value
+        if fsMax == -1:
+            return {'FINISHED'}
+        #print("  maxFS = %d" % (fsMax))
+
+        matCount = len(bpy.data.materials)
+        fsToMatIdx = [None] * (fsMax+1) 
+        p = 0
+        np=len(fsAttrib.data)
+        for p in range(np):
+            #for fs in fsAttrib.data:
+            fs = fsAttrib.data[p];
+            fsIdx = fs.value
+            #print("  fac %d : fs=%d" % (p, fsIdx))
+            
+            if fsIdx < 0:
+                continue
+
+            #if not fsIdx in fsToMatIdx:
+            if fsToMatIdx[fsIdx] == None:
+                fsToMatIdx[fsIdx] = matCount
+                o.data.polygons[p].material_index = matCount
+                matCount = matCount+1
+
+                # create the material (assign random color)
+                matName = ("FaceSetMat%d" % fsIdx)
+                mat = bpy.data.materials.new(matName)
+                r = random.randint(0, 255) / 255.0
+                g = random.randint(0, 255) / 255.0
+                b = random.randint(0, 255) / 255.0
+                #print ("face map [%d] : (%f %f %f)" % (matIndex-1, r, g, b))
+                #r = (matIndex-1.0) / mapCount
+                mat.diffuse_color = (r, g, b, 1)
+                if o.data.materials:
+                    #if matIndex < len(o.data.materials):
+                    #    o.data.materials[matIndex] = mat
+                    #else:
+                    o.data.materials.append(mat)
+            else:
+                o.data.polygons[p].material_index = fsToMatIdx[fsIdx]
+                
+            #p = p+1
+
+        # CHECKING:
+        #for f in o.data.polygons: print(str(f.material_index))
+        
+        return {'FINISHED'}
+        
+
+
+# -------------------------- Online Help operator --------------------
+class QREMESHER_OT_online_help(bpy.types.Operator):
+    bl_idname = "qremesher.online_help"
+    bl_label = t("Online Help")
+    bl_description = t("Opens QuadRemesher's online help in a web browser.")
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(self, context):
+        return True
+
+    def execute(self, context):
+        try:
+            import webbrowser
+            webbrowser.open('https://exoside.com/quadremesherdata/plugins_webdoc_link.php?App=Blender')
+        except :
+            import traceback
+            print("Exception: in Online Help operator..\n")
+            print(str(traceback.format_exc()) + "\n")
+            
+        return {'FINISHED'}
+
+
+# -------------------------- News or LatestVersion operator --------------------
+class QREMESHER_OT_News_LatestVer(bpy.types.Operator):
+    # class variables:
+    bl_idname = "qremesher.latestver"
+    bl_label = t("Check Version")
+    bl_description = t("Checks whether you have the latest version of the addon or not")
+    bl_options = {'REGISTER', 'UNDO'}
+
+    #addon_version = None # set in register. ex: (1,2,2)
+    newReadDone = False
+    newsButtonLabel = ""
+    newsButtonDesc = ""
+
+    @classmethod
+    def poll(self, context):
+        return True
+
+    @classmethod 
+    def description(self, context, properties):
+        try:
+            return newsButtonDesc
+        except Exception:
+            return "Latest version"
+
+
+    def execute(self, context):
+        # 1 - get license manager path
+        licenseManagerPath = getLicenseManagerPath()
+        if licenseManagerPath == None:
+            helpLinkStr = "\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v="+__QR_plugin_version__+"&id=LicMgrPath)"
+            self.report({'ERROR'}, "Error while settings LicenseManager path!"+helpLinkStr)
+            return {'CANCELLED'}
+        
+        # 2 - launch licenseManager
+        InstallQuadRemesherEngineIfNeeded(self, context, licenseManagerPath)
+
+        #console_print("Launching LicenseManager : " + str(licenseManagerPath))
+        try:
+            verStr = "1.3.0"
+            subprocess.Popen([licenseManagerPath, "-cn", "-hostApp", "Blender", "-prodVer", verStr, "-haVer", getHostAppVer()])
+        except Exception:
+            #console_print("ERROR : " + str(licenseManagerPath))
+            helpLinkStr = "\nPlease check Trouble-Shooting section in the FAQ (https://www.exoside.com/php_ext/qr_tsl.php?ha=Blender&v="+__QR_plugin_version__+"&id=LicMgrLaunch)"
+            self.report({'ERROR'}, "Exception: while launching LicenseManager.... (" + str(licenseManagerPath) + ")" + helpLinkStr)
+            #import traceback
+            #print(str(traceback.format_exc()) + "\n")
+            return {'CANCELLED'}
+
+        #console_print("OK : " + str(licenseManagerPath))
+        return {'FINISHED'}
+
+    
+    # called in register()
+    @classmethod
+    def getNewsButtonLabel(cls):
+        return cls.newsButtonLabel
+
+    @classmethod
+    def readNews(cls):
+        cls.newsReadDone = True
+        cls.newsButtonLabel = "Check Version"
+        cls.newsButtonDesc = "Check Version description"
+
+        try:
+            folder = os.getenv('LOCALAPPDATA')
+            newsFilePath = os.path.join(folder, "Exoside/QuadRemesher/Datas_Blender/ServerNews.txt")
+            #print("newsFilePath=")
+            #print(newsFilePath)
+            f = open(newsFilePath, "r")
+            newsFileLines = f.read().split("\n")
+            f.close()
+        except Exception:
+            # go here if the ServerNews file does not exist!
+            #import traceback
+            #print(str(traceback.format_exc()) + "\n")
+            #print("Missing Server file")
+            return
+            
+        try:
+            # add the button        
+            if (newsFileLines!=None) and (len(newsFileLines)>=2):
+                cls.newsButtonLabel = newsFileLines[0]
+                #print("newsFileLines[0]=")
+                #print(newsFileLines[0])
+                #newsFileLines[2] = type!
+                #newsFileLines[3] = date!
+                if (len(newsFileLines)>4):
+                    cls.newsButtonDesc = newsFileLines[4]
+                    #bpy.types.Scene.qremesher.newsButtonDescription = newsButtonDesc
+                
+        except Exception:
+            import traceback
+            print(str(traceback.format_exc()) + "\n")
+
+
 
