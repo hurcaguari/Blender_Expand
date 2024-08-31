@@ -20,6 +20,5 @@ def up_expand():
         json_file.write(dumps(expand_list))
     return expand_list
 
-
 if __name__ == "__main__":
     up_expand()
