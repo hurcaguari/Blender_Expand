@@ -24,50 +24,16 @@ def file_hash(file_path:str,sha:str = 'sha256') -> str:
         print(file_path, '没找到文件')
 
 
-def get_infos(path):
-    out_list = []
-    first = 0
-    end = 0
-    path = path+'\\'+'__init__.py'
-    with open(path, 'r',encoding='UTF-8') as f:
-        inx = 0
-        for line in f.readlines():
-            inx += 1
-            if line.split('=')[0].strip() == 'bl_info':
-                first = inx
-            elif line == '}\n':
-                if inx > first:
-                    out_list.append(line) if first and not end else None
-                    return out_list
-            out_list.append(line) if first and not end else None
-
 def get_info(path):
     out_dict = {}
-    list_text = [line.strip('\n').strip('\r').strip('\t').strip(',') for line in get_infos(path)]
-    for line in list_text:
-        if not '#' in line:
-            if not '=' in line and len(line.split(':')) > 1:
-                strdata = line.split(':',1)
-                out_dict[eval(strdata[0])] = eval(strdata[1])
-    return out_dict
-
-def get_data(path):
-    info = get_info(path)
-    x = list(info.keys())
-
+    toml_path = path+'\\'+'blender_manifest.toml'
     with open('init.json','r',encoding='UTF-8') as init_file:
         init = load(init_file)
-    
-    return {
-        "schema_version":info['schema'] if 'schema' in list(info.keys()) else '1.0.0',
-        "version":'.'.join(str(i) for i in info['blender']),
-        "tagline":info['description'],
-        "archive_url":"{}__release__/{}.zip".format(init['urlpath'],splitext(basename(path))[0]),
-        "type":'add-on',
-        "blender_version_min":'4.2.0',
-        "website":info['doc_url'],
-        "maintainer":"xz-blender"
-    }
+    with open(toml_path, 'r',encoding='UTF-8') as f:
+        for line in f.readlines():
+            out_dict[line.strip('\n').split('=',1)[0].strip(' ')] = eval(line.strip('\n').split('=',1)[1])
+    out_dict['archive_url'] = "{}__release__/{}.zip".format(init['urlpath'],splitext(basename(path))[0])
+    return out_dict
 
 def out_zip(path):
     out_path = r'.\\__release__\\{}'.format(basename(path)+'.zip')
@@ -91,30 +57,15 @@ def zipDir(dirpath, outFullName):
     zip.close()
 
 def Release(path):
-    info = get_data(path)
+    info = get_info(path)
     path = out_zip(path)
-    return {
-            "id": '_'.join(splitext(basename(path))[0].split('_')),
-            "schema_version": info['schema_version'],
-            "name": ' '.join(splitext(basename(path))[0].split('_')),
-            "version": info['version'],
-            "tagline": info['tagline'],
-            "archive_hash": file_hash(path),
-            "archive_size": getsize(path),
-            "archive_url": info['archive_url'],
-            "type": info['type'],
-            "blender_version_min": info['blender_version_min'],
-            "website": info['website'],
-            "maintainer": info['maintainer'],
-            "license": [
-                "SPDX:GPL-2.0-or-later"
-            ],
-            "tags": [
-                "3D View"
-            ]
-        }
-
+    info['archive_hash'] = file_hash(path)
+    info['archive_size'] = getsize(path)
+    # info['archive_hash'] = file_hash(path)
+    
+    return info
  
 if __name__ == "__main__":
     path = '.\\expand_data\\Quad_Remesher'
     x = Release(path)
+    pass

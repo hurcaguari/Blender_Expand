@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
-from quad_remesher_1_2.iBlender_QuadRemesher import t
+from .iBlender_QuadRemesher import t
+# from Quad_Remesher.iBlender_QuadRemesher import t
 
 # "Quad-Remesher Bridge for Blender"
 # Author : Maxime Rouca

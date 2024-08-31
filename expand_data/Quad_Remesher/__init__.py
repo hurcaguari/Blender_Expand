@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
-from quad_remesher_1_2.iBlender_QuadRemesher import t
+from .iBlender_QuadRemesher import t
+# from Quad_Remesher.iBlender_QuadRemesher import t
 
 # "Quad-Remesher Bridge for Blender"
 # Author : Maxime Rouca
@@ -44,8 +45,7 @@ if 'bpy' in locals():
     from importlib import reload
     import sys
     for k, v in list(sys.modules.items()):
-        if k.startswith('quad_remesher_1_2.'):
-            
+        if k.startswith('Quad_Remesher.'):
             reload(v)
 
 import bpy
@@ -236,7 +236,9 @@ class QREMESHER_PT_qremesher(bpy.types.Panel):
 		return True
 
 	def draw(self, context):
-		addon_prefs = bpy.context.preferences.addons[__package__.split(".")[0]].preferences
+		# print('测试输出',__package__.split(".")[0])
+		# print(__package__)
+		addon_prefs = bpy.context.preferences.addons['Quad_Remesher'].preferences
 
 		layout = self.layout
 		box = layout.box()
@@ -248,7 +250,7 @@ class QREMESHER_PT_qremesher(bpy.types.Panel):
 
 class iBlender(bpy.types.AddonPreferences):
 
-    bl_idname = __package__.split(".")[0]
+    bl_idname = 'Quad_Remesher'
 
     def update_language(self, context):
         bpy.context.preferences.view.language = self.language
@@ -306,17 +308,18 @@ class QREMESHER_PT_qremesher_setting_panel(bpy.types.Panel):
 '''
 
 
-classes = [iBlender,
+classes = [
+	iBlender,
 	QRSettingsPropertyGroup,
 
-		   QREMESHER_PT_qremesher,
-		   #QREMESHER_PT_qremesher_setting_panel,
+	QREMESHER_PT_qremesher,
+	#QREMESHER_PT_qremesher_setting_panel,
 
-		   QREMESHER_OT_remesh,
-		   QREMESHER_OT_reset_settings,
-		   QREMESHER_OT_license_manager,
-		   QREMESHER_OT_facemap_to_materials,
-		   ]
+	QREMESHER_OT_remesh,
+	QREMESHER_OT_reset_settings,
+	QREMESHER_OT_license_manager,
+	QREMESHER_OT_facemap_to_materials,
+	]
 addon_keymaps = []
 
 
