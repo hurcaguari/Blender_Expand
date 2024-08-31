@@ -36,7 +36,6 @@ bl_info = {
 	"location": "N-Panel",
 	"warning": "",
 	"doc_url": "https://exoside.com/quadremesher/quadremesher-troubleshooting/",
-	"tracker_url": "https://item.taobao.com/item.htm?ft=t&id=646864996442",
 	"category": "Mesh"
 }
 
