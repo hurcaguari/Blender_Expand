@@ -5,7 +5,8 @@ from os.path import splitext
 from os.path import basename
 from os.path import join
 from os import walk
-from json import load
+from json import load as json_load
+from toml import load as toml_load
 import zipfile
 
 
@@ -25,17 +26,13 @@ def file_hash(file_path:str,sha:str = 'sha256') -> str:
 
 def load_init():
     with open('init.json','r',encoding='UTF-8') as init_file:
-        return load(init_file)
+        return json_load(init_file)
 
 def get_info(path):
-    out_dict = {}
+    # out_dict = {}
     toml_path = path+'\\'+'blender_manifest.toml'
-    with open('init.json','r',encoding='UTF-8') as init_file:
-        init = load(init_file)
-    with open(toml_path, 'r',encoding='UTF-8') as f:
-        for line in f.readlines():
-            if len(line.split('=',1)) > 1:
-                out_dict[line.strip('\n').split('=',1)[0].strip(' ')] = eval(line.strip('\n').split('=',1)[1])
+    init = load_init()
+    out_dict = toml_load(toml_path)
     out_dict['archive_url'] = "{}__release__/{}.zip".format(init['urlpath'],splitext(basename(path))[0])
     return out_dict
 
@@ -65,8 +62,6 @@ def Release(path):
     path = out_zip(path)
     info['archive_hash'] = file_hash(path)
     info['archive_size'] = getsize(path)
-    # info['archive_hash'] = file_hash(path)
-    
     return info
  
 if __name__ == "__main__":
