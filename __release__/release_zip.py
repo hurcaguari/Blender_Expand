@@ -5,6 +5,7 @@ from os.path import splitext
 from os.path import basename
 from os.path import join
 from os import walk
+from json import load
 import zipfile
 
 
@@ -52,12 +53,15 @@ def get_info(path):
 def get_data(path):
     info = get_info(path)
     x = list(info.keys())
-    pass
+
+    with open('init.json','r',encoding='UTF-8') as init_file:
+        init = load(init_file)
+    
     return {
         "schema_version":info['schema'] if 'schema' in list(info.keys()) else '1.0.0',
         "version":'.'.join(str(i) for i in info['blender']),
         "tagline":info['description'],
-        "archive_url":"https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/{}.zip".format(splitext(basename(path))[0]),
+        "archive_url":"{}__release__/{}.zip".format(init['urlpath'],splitext(basename(path))[0]),
         "type":'add-on',
         "blender_version_min":'4.2.0',
         "website":info['doc_url'],
