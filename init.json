@@ -1,1 +1,4 @@
-{"urlpath":"https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/"}
+{
+    "urlpath": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/",
+    "expand_path": ".\\expand_data\\"
+}

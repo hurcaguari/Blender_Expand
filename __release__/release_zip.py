@@ -23,6 +23,9 @@ def file_hash(file_path:str,sha:str = 'sha256') -> str:
     else:
         print(file_path, '没找到文件')
 
+def load_init():
+    with open('init.json','r',encoding='UTF-8') as init_file:
+        return load(init_file)
 
 def get_info(path):
     out_dict = {}
