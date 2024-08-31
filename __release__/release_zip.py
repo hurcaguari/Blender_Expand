@@ -52,7 +52,6 @@ def zipDir(dirpath, outFullName):
     for path, dirnames, filenames in walk(dirpath):
         # 去掉目标跟路径，只对目标文件夹下边的文件及文件夹进行压缩
         fpath = path.replace(dirpath, '') #basename(dirpath)+'\\'+path.replace(dirpath, '')
-        pass
         for filename in filenames:
             zip.write(join(path, filename), join(fpath, filename))
     zip.close()
@@ -67,4 +66,3 @@ def Release(path):
 if __name__ == "__main__":
     path = '.\\expand_data\\Quad_Remesher'
     x = Release(path)
-    pass
