@@ -34,7 +34,8 @@ def get_info(path):
         init = load(init_file)
     with open(toml_path, 'r',encoding='UTF-8') as f:
         for line in f.readlines():
-            out_dict[line.strip('\n').split('=',1)[0].strip(' ')] = eval(line.strip('\n').split('=',1)[1])
+            if len(line.split('=',1)) > 1:
+                out_dict[line.strip('\n').split('=',1)[0].strip(' ')] = eval(line.strip('\n').split('=',1)[1])
     out_dict['archive_url'] = "{}__release__/{}.zip".format(init['urlpath'],splitext(basename(path))[0])
     return out_dict
 

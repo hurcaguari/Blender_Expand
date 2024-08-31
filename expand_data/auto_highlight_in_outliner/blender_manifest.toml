@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "auto_highlight_in_outliner"
+name = "Auto Highlight In Outliner"
+version = "3.5.0"
+tagline = "自动高亮显示大纲视图中的选定对象"
+maintainer = "Amandeep"
+type = "add-on"
+tags = [ "Object",]
+blender_version_min = "4.2.0"
+license = [ "SPDX:GPL-2.0-or-later",]
+website = "https://blendermarket.com/products/auto-highlight-in-outliner"
+copyright = [ "blender"]

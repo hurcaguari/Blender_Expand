@@ -1,0 +1,20 @@
+schema_version = "1.0.0"
+
+id = "per_camera_resolution"
+version = "2.2.2"
+name = "Per-Camera Resolution"
+tagline = "Every camera should have its resolution"
+maintainer = "Damien Picard <dam.pic@free.fr>"
+type = "add-on"
+
+website = "http://projects.blender.org/pioverfour/per_camera_resolution"
+
+# Optional list defined by Blender and server, see:
+# https://docs.blender.org/manual/en/dev/extensions/tags.html
+tags = ["Scene", "Camera"]
+
+blender_version_min = "4.2.0"
+
+license = ["SPDX:GPL-2.0-or-later",]
+# Optional: required by some licenses.
+copyright = ["2022-2024 Damien Picard",]
