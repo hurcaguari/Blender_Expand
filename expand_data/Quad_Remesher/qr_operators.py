@@ -182,14 +182,14 @@ def getQREngineFolder():
     isMacOS = (platform.system()=="Darwin") or (platform.system()=="macosx")
     isLinux = (platform.system()=="Linux")
     if (isMacOS):
-        engineFolder = "/Users/Shared/Exoside/QuadRemesher/Datas_Blender/QuadRemesherEngine_1.2"
+        engineFolder = "/Users/Shared/Exoside/QuadRemesher/Datas_Blender/QuadRemesherEngine"
     elif isLinux:
-        engineFolder = os.path.expanduser("~/.local/share/Exoside/QuadRemesher/Datas_Blender/QuadRemesherEngine_1.2")
+        engineFolder = os.path.expanduser("~/.local/share/Exoside/QuadRemesher/Datas_Blender/QuadRemesherEngine")
         #engineFolder = "/home/maxime/.local/share/Exoside/QuadRemesher/Datas_Blender/QuadRemesherEngine_1.2"
     else:
         #appData = os.getenv('APPDATA')  windows ... UserName/../Roaming... 
         appData = os.getenv('ALLUSERSPROFILE')  # on windows : C:\Users\All Users == C:\ProgramData\
-        engineFolder = os.path.join(os.path.dirname(__file__), 'QuadRemesherEngine_1.2')
+        engineFolder = os.path.join(os.path.dirname(__file__), 'QuadRemesherEngine')
         # engineFolder = os.path.join(appData, "Exoside/QuadRemesher/Datas_Blender/QuadRemesherEngine_1.2")
     return engineFolder
     
