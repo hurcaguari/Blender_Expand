@@ -19,7 +19,7 @@ bl_info = {
     "location": "View3D",
     "description": "Utilities Gadget",
     "warning": "",
-    "doc_url": "",
+    "doc_url": "https://github.com/hurcaguari/Blender-Utilities-Gadget",
     "category": "Mesh",
 }
 
