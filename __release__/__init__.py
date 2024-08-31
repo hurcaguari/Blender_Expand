@@ -1,3 +1,2 @@
-import release_zip
+from .release_zip import Release
 
-zip = release_zip

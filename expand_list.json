@@ -2,17 +2,37 @@
     "blocklist": [],
     "data": [
         {
-            "id": "sculpt_paint_wheel",
+            "id": "Quad_Remesher",
             "schema_version": "1.0.0",
-            "name": "Sculpt Paint Wheel",
-            "version": "3.0.4",
-            "tagline": "雕刻和绘画工具轮盘",
-            "archive_hash": "sha256:7997bd4c1e48785dc6fb8fc449faae17036e4f08ad3dce2eeb013c792c394f71",
-            "archive_size": 276493,
-            "archive_url": "http://blender4.com/add-ons/sculpt-paint-wheel/3.0.4/download/add-on-sculpt-paint-wheel-v3.0.4.zip",
+            "name": "Quad Remesher",
+            "version": "2.80.0",
+            "tagline": "Quad Remesher Bridges",
+            "archive_hash": "sha256:00bfd6e65d18abb48d86fd70eacd36e3f7e31646f0bc6cacf581b169e47fe89a",
+            "archive_size": 16393906,
+            "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/Quad_Remesher.zip",
             "type": "add-on",
             "blender_version_min": "4.2.0",
-            "website": "http://blender4.com/add-ons/sculpt-paint-wheel/",
+            "website": "https//exoside.com/quadremesher/quadremesher-troubleshooting/",
+            "maintainer": "xz-blender",
+            "license": [
+                "SPDX:GPL-2.0-or-later"
+            ],
+            "tags": [
+                "3D View"
+            ]
+        },
+        {
+            "id": "Utilities_Gadget",
+            "schema_version": "1.0.0",
+            "name": "Utilities Gadget",
+            "version": "4.2.0",
+            "tagline": "Utilities Gadget",
+            "archive_hash": "sha256:268f53afae1287c2fa485bc9c8f7ad89d9e87787bba1ec4c43ee5604da4526d7",
+            "archive_size": 4969,
+            "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/Utilities_Gadget.zip",
+            "type": "add-on",
+            "blender_version_min": "4.2.0",
+            "website": "",
             "maintainer": "xz-blender",
             "license": [
                 "SPDX:GPL-2.0-or-later"

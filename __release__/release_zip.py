@@ -22,7 +22,7 @@ def file_hash(file_path:str,sha:str = 'sha256') -> str:
     else:
         print(file_path, '没找到文件')
 
-path = '.\\expand_data\\Quad_Remesher'
+
 def get_infos(path):
     out_list = []
     first = 0
@@ -69,9 +69,6 @@ def out_zip(path):
     zipDir(path,out_path)
     return out_path
 
-
- 
- 
 def zipDir(dirpath, outFullName):
     """
     压缩指定文件夹
@@ -87,6 +84,7 @@ def zipDir(dirpath, outFullName):
         for filename in filenames:
             zip.write(join(path, filename), join(fpath, filename))
     zip.close()
+
 def Release(path):
     info = get_data(path)
     path = out_zip(path)
@@ -113,12 +111,5 @@ def Release(path):
 
  
 if __name__ == "__main__":
-    input_path = "./origin_file_001"
-    output_path = "./test.zip"
- 
-    zipDir(input_path, output_path)
-
-
-# print(file_hash(path))
-x = Release(path)
-pass
+    path = '.\\expand_data\\Quad_Remesher'
+    x = Release(path)
