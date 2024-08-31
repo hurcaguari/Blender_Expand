@@ -24,7 +24,7 @@ from .iBlender_QuadRemesher import t
 
 # <pep8 compliant>
 
-__QR_plugin_version__ = "1.23"
+__QR_plugin_version__ = "1.3"
 
 bl_info = {
 	#"name": "Quad Remesher "+__QR_plugin_version__+" Bridge",  # (it break the display of all plugins... in prefs>Addons)
