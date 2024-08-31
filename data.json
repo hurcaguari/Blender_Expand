@@ -1,0 +1,26 @@
+{
+    "blocklist": [],
+    "data": [
+        {
+            "id": "Utilities Gadget",
+            "schema_version": "1.1.0",
+            "name": "Utilities Gadget",
+            "version": "4.0.0",
+            "tagline": "实用小工具",
+            "archive_hash": "sha256:ebbcae14dacc8a9b73a4dbd365a769f11059459825da585dc167053f6d22a23d",
+            "archive_size": 5448,
+            "archive_url": "https://github.com/hurcaguari/Blender-Utilities-Gadget/releases/download/main/Utilities_Gadget.zip",
+            "type": "add-on",
+            "blender_version_min": "4.2.0",
+            "website": "https://github.com/hurcaguari/Blender-Utilities-Gadget",
+            "maintainer": "xz-blender",
+            "license": [
+                "SPDX:GPL-2.0-or-later"
+            ],
+            "tags": [
+                "3D View"
+            ]
+        }
+    ],
+    "version": "v1"
+}
