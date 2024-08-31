@@ -84,7 +84,7 @@ def zipDir(dirpath, outFullName):
     zip = zipfile.ZipFile(outFullName, "w", zipfile.ZIP_DEFLATED)
     for path, dirnames, filenames in walk(dirpath):
         # 去掉目标跟路径，只对目标文件夹下边的文件及文件夹进行压缩
-        fpath = basename(dirpath)+'\\'+path.replace(dirpath, '')
+        fpath = path.replace(dirpath, '') #basename(dirpath)+'\\'+path.replace(dirpath, '')
         pass
         for filename in filenames:
             zip.write(join(path, filename), join(fpath, filename))
