@@ -30,7 +30,7 @@ bl_info = {
 	"name": "Quad Remeshers",
 	"author": "Maxime",
 	"version": (1, 2, 3),	# see __QR_plugin_version__
-	"blender": (2, 80, 0),
+	"blender": (2, 8, 0),
 	#"description": "Quad Remesher "+__QR_plugin_version__+" Bridge",
 	"description": "Quad Remesher Bridges",
 	"location": "N-Panel",

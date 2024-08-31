@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 id = "Utilities_Gadget"
 name = "Utilities Gadget"
-version = "4.0.0"
+version = "4.2.0"
 tagline = "Quad Remesher Bridges"
 maintainer = "hurcaguari"
 type = "add-on"
