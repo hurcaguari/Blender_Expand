@@ -10,6 +10,7 @@ expand_list = {
 
 def up_expand():
     for i in ['.\\expand_data\\Quad_Remesher','.\\expand_data\\Utilities_Gadget']:
+        print('更新 {}'.format(i))
         expand_list['data'].append(RELEASE(i))
 
     with open('expand_list.json','w') as json_file:
