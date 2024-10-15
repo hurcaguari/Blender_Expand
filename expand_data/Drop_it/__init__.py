@@ -16,10 +16,10 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import bpy
-import mathutils
+import bpy # type: ignore
+import mathutils # type: ignore # type: ignore
 import time
-import numpy
+import numpy # type: ignore
 import math
 import random
 
@@ -52,31 +52,31 @@ class DROPIT_OT_drop_it(bpy.types.Operator):
         items=[
             ("lw_vertex", "Lowest Vertex", ""),
             ("origin", "Origin", "")]
-    )
+    ) # type: ignore
 
     col_in_sel: bpy.props.BoolProperty(
         name="Collision in Selection",
         description="Collision for selected Objects",
         default=True
-    )
+    ) # type: ignore
 
     affect_parenting: bpy.props.BoolProperty(
         name="Parenting Settings",
         description="Affect Parent and Child Connection",
         default=False
-    )
+    ) # type: ignore
 
     affect_only_parents: bpy.props.BoolProperty(
         name="Affect Only Parents",
         description="Affect the Parents, leaving the Children in Place",
         default=False
-    )
+    ) # type: ignore
 
     affect_sel_childs: bpy.props.BoolProperty(
         name="Affect Selected Children",
         description="Affect Selected Children",
         default=False
-    )
+    ) # type: ignore
 
     bpy.types.WindowManager.surf_align = bpy.props.BoolProperty(
         default=True)
@@ -88,7 +88,7 @@ class DROPIT_OT_drop_it(bpy.types.Operator):
         min=0,
         max=360,
         subtype='ANGLE'
-    )
+    ) # type: ignore
 
     rand_loc: bpy.props.FloatProperty(
         name="Location:",
@@ -97,7 +97,7 @@ class DROPIT_OT_drop_it(bpy.types.Operator):
         min=0,
         max=100,
         subtype='DISTANCE'
-    )
+    ) # type: ignore
 
     offset_z: bpy.props.FloatProperty(
         name="Offset Z Location:",
@@ -106,7 +106,7 @@ class DROPIT_OT_drop_it(bpy.types.Operator):
         min=-10,
         max=10,
         subtype='DISTANCE'
-    )
+    ) # type: ignore
 
     @classmethod
     def poll(cls, context):
