@@ -9,6 +9,7 @@ from json import load as json_load
 from toml import load as toml_load
 from toml import dump as toml_dump
 from .git_url import serach_git
+import re
 import ast
 import zipfile
 
@@ -53,8 +54,32 @@ def get_variable_from_file(file_path, variable_name):
 
     raise ValueError(f"Variable '{variable_name}' not found in {file_path}")
 
+def find_urls_in_dict(data):
+    """
+    遍历字典中的所有值并查找 URL
+    :param data: 输入字典
+    :return: 包含所有 URL 的列表
+    """
+    urls = []
+    url_pattern = re.compile(r'https?://[^\s]+')
+
+    def _find_urls(value):
+        if isinstance(value, dict):
+            for v in value.values():
+                _find_urls(v)
+        elif isinstance(value, list):
+            for item in value:
+                _find_urls(item)
+        elif isinstance(value, str):
+            matches = url_pattern.findall(value)
+            urls.extend(matches)
+
+    _find_urls(data)
+    return urls
+
 def construct_toml(toml_path,path):
     bl_info = get_variable_from_file(path+'\\__init__.py','bl_info')
+    urls = find_urls_in_dict(bl_info)
     out_dict = {
         "schema_version": '.'.join(map(str, bl_info['version'])),
         "id": bl_info['name'].lower().replace(' ','_'),
@@ -66,7 +91,7 @@ def construct_toml(toml_path,path):
         "tags" : [bl_info['category']],
         "blender_version_min": '.'.join(map(str, bl_info['blender'])),
         "license" : [ "SPDX:GPL-2.0-or-later",],
-        "website" : serach_git(bl_info['name'])['html_url'],
+        "website" : find_urls_in_dict(bl_info)[0] if urls else serach_git(bl_info['name'])['html_url'],
         "copyright" : [ "blender"]
     }
     return out_toml(out_dict,toml_path)
