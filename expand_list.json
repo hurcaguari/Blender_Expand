@@ -1,1 +1,176 @@
-{"blocklist": [], "data": [{"schema_version": "1.0.0", "id": "auto_highlight_in_outliner", "name": "Auto Highlight In Outliner", "version": "3.5.0", "tagline": "\u81ea\u52a8\u9ad8\u4eae\u663e\u793a\u5927\u7eb2\u89c6\u56fe\u4e2d\u7684\u9009\u5b9a\u5bf9\u8c61", "maintainer": "Amandeep", "type": "add-on", "tags": ["Object"], "blender_version_min": "4.2.0", "license": ["SPDX:GPL-2.0-or-later"], "website": "https://blendermarket.com/products/auto-highlight-in-outliner", "copyright": ["blender"], "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/auto_highlight_in_outliner.zip", "archive_hash": "sha256:7f5047695520212b1f06de88180eacb2ba0fa01c38f19ec3a8bb8d52079add5b", "archive_size": 55391}, {"schema_version": "1.2", "id": "drop_it", "name": "Drop It", "version": "1.2", "tagline": "Drop Objects to Ground or Surface", "maintainers": "Andreas Aust", "type": "add-on", "tags": ["Object"], "blender_version_min": "2.80.0", "license": ["SPDX:GPL-2.0-or-later"], "website": "https://blenderartists.org/t/drop-it-free-addon/1244259", "copyright": ["blender"], "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/Drop_it.zip", "archive_hash": "sha256:184555b2e6823706f9e5a962109bc810d5bf98b9a3bd049d7d18a4a4803f3d16", "archive_size": 5369}, {"schema_version": "1.0.0", "id": "io_scene_max", "name": "Import Autodesk MAX (.max)", "version": "1.5.2", "tagline": "Import 3DSMAX meshes & materials", "maintainer": "NRG Sille <nrgsille@gmx.de>", "type": "add-on", "tags": ["Import-Export", "Mesh", "Material"], "blender_version_min": "4.2.0", "license": ["SPDX:GPL-2.0-or-later"], "website": "https://github.com/nrgsille76/io_scene_max", "copyright": ["2023-2024 Sebastian Schrand", "2017-2022 Jens M. Plonka", "2005-2018 Philippe Lagadec"], "permissions": {"files": "Import Autodesk MAX files"}, "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/io_scene_max.zip", "archive_hash": "sha256:3b303f3543bfdf369e830ab9d7a57f36b0fa0c2dd05f7326150fde0ed86f35f5", "archive_size": 60106}, {"schema_version": "1.0.0", "id": "looptools", "name": "LoopTools", "version": "4.7.7", "tagline": "Mesh modelling toolkit. Several tools to aid modelling", "maintainer": "Community", "type": "add-on", "tags": ["Mesh"], "blender_version_min": "4.2.0", "license": ["SPDX:GPL-2.0-or-later"], "website": "https://projects.blender.org/extensions/mesh_looptools", "copyright": ["2024 Bart Crouch", "2024 Vladimir Spivak (cwolf3d)"], "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/looptools.zip", "archive_hash": "sha256:692e5d18a0600e41e5fbdc90cd6d9de1ef0b9ed54133e13aecc4372db10c30ed", "archive_size": 124452}, {"schema_version": "1.0.0", "id": "per_camera_resolution", "version": "2.2.2", "name": "Per-Camera Resolution", "tagline": "Every camera should have its resolution", "maintainer": "Damien Picard <dam.pic@free.fr>", "type": "add-on", "website": "http://projects.blender.org/pioverfour/per_camera_resolution", "tags": ["Scene", "Camera"], "blender_version_min": "4.2.0", "license": ["SPDX:GPL-2.0-or-later"], "copyright": ["2022-2024 Damien Picard"], "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/per_camera_resolution.zip", "archive_hash": "sha256:445754830c405a81e9799fc70863ea183f1ccf25bc131a92b122afe8c1ea78eb", "archive_size": 29822}, {"schema_version": "1.3.0", "id": "quad_remeshers", "name": "Quad Remeshers", "version": "1.3.0", "tagline": "Quad Remesher Bridges", "maintainers": "Maxime", "type": "add-on", "tags": ["Mesh"], "blender_version_min": "2.80.0", "license": ["SPDX:GPL-2.0-or-later"], "website": "https://exoside.com/quadremesher/quadremesher-troubleshooting/", "copyright": ["blender"], "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/Quad_Remesher.zip", "archive_hash": "sha256:090a2976fb1e1f1ad5e1972af4c38fdf27260f8e2dc8ed8e0ad793a7c35bcba2", "archive_size": 15770385}, {"schema_version": "1.1", "id": "utilities_gadget", "name": "Utilities Gadget", "version": "1.1", "tagline": "Utilities Gadget", "maintainers": "INEINST MACH", "type": "add-on", "tags": ["Mesh"], "blender_version_min": "4.2.0", "license": ["SPDX:GPL-2.0-or-later"], "website": "https://github.com/hurcaguari/Blender-Utilities-Gadget", "copyright": ["blender"], "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/Utilities_Gadget.zip", "archive_hash": "sha256:b3854c4e034d67fb675e708e8247c2129c60a2234f502692d23081951484a9ab", "archive_size": 5340}], "version": "v1"}
+{
+    "blocklist": [],
+    "data": [
+        {
+            "schema_version": "1.0.0",
+            "id": "auto_highlight_in_outliner",
+            "name": "Auto Highlight In Outliner",
+            "version": "3.5.0",
+            "tagline": "\u81ea\u52a8\u9ad8\u4eae\u663e\u793a\u5927\u7eb2\u89c6\u56fe\u4e2d\u7684\u9009\u5b9a\u5bf9\u8c61",
+            "maintainer": "Amandeep",
+            "type": "add-on",
+            "tags": [
+                "Object"
+            ],
+            "blender_version_min": "4.2.0",
+            "license": [
+                "SPDX:GPL-2.0-or-later"
+            ],
+            "website": "https://blendermarket.com/products/auto-highlight-in-outliner",
+            "copyright": [
+                "blender"
+            ],
+            "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/auto_highlight_in_outliner.zip",
+            "archive_hash": "sha256:7f5047695520212b1f06de88180eacb2ba0fa01c38f19ec3a8bb8d52079add5b",
+            "archive_size": 55391
+        },
+        {
+            "schema_version": "1.2",
+            "id": "drop_it",
+            "name": "Drop It",
+            "version": "1.2",
+            "tagline": "Drop Objects to Ground or Surface",
+            "maintainers": "Andreas Aust",
+            "type": "add-on",
+            "tags": [
+                "Object"
+            ],
+            "blender_version_min": "2.80.0",
+            "license": [
+                "SPDX:GPL-2.0-or-later"
+            ],
+            "website": "https://blenderartists.org/t/drop-it-free-addon/1244259",
+            "copyright": [
+                "blender"
+            ],
+            "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/Drop_it.zip",
+            "archive_hash": "sha256:184555b2e6823706f9e5a962109bc810d5bf98b9a3bd049d7d18a4a4803f3d16",
+            "archive_size": 5369
+        },
+        {
+            "schema_version": "1.0.0",
+            "id": "io_scene_max",
+            "name": "Import Autodesk MAX (.max)",
+            "version": "1.5.2",
+            "tagline": "Import 3DSMAX meshes & materials",
+            "maintainer": "NRG Sille <nrgsille@gmx.de>",
+            "type": "add-on",
+            "tags": [
+                "Import-Export",
+                "Mesh",
+                "Material"
+            ],
+            "blender_version_min": "4.2.0",
+            "license": [
+                "SPDX:GPL-2.0-or-later"
+            ],
+            "website": "https://github.com/nrgsille76/io_scene_max",
+            "copyright": [
+                "2023-2024 Sebastian Schrand",
+                "2017-2022 Jens M. Plonka",
+                "2005-2018 Philippe Lagadec"
+            ],
+            "permissions": {
+                "files": "Import Autodesk MAX files"
+            },
+            "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/io_scene_max.zip",
+            "archive_hash": "sha256:3b303f3543bfdf369e830ab9d7a57f36b0fa0c2dd05f7326150fde0ed86f35f5",
+            "archive_size": 60106
+        },
+        {
+            "schema_version": "1.0.0",
+            "id": "looptools",
+            "name": "LoopTools",
+            "version": "4.7.7",
+            "tagline": "Mesh modelling toolkit. Several tools to aid modelling",
+            "maintainer": "Community",
+            "type": "add-on",
+            "tags": [
+                "Mesh"
+            ],
+            "blender_version_min": "4.2.0",
+            "license": [
+                "SPDX:GPL-2.0-or-later"
+            ],
+            "website": "https://projects.blender.org/extensions/mesh_looptools",
+            "copyright": [
+                "2024 Bart Crouch",
+                "2024 Vladimir Spivak (cwolf3d)"
+            ],
+            "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/looptools.zip",
+            "archive_hash": "sha256:692e5d18a0600e41e5fbdc90cd6d9de1ef0b9ed54133e13aecc4372db10c30ed",
+            "archive_size": 124452
+        },
+        {
+            "schema_version": "1.0.0",
+            "id": "per_camera_resolution",
+            "version": "2.2.2",
+            "name": "Per-Camera Resolution",
+            "tagline": "Every camera should have its resolution",
+            "maintainer": "Damien Picard <dam.pic@free.fr>",
+            "type": "add-on",
+            "website": "http://projects.blender.org/pioverfour/per_camera_resolution",
+            "tags": [
+                "Scene",
+                "Camera"
+            ],
+            "blender_version_min": "4.2.0",
+            "license": [
+                "SPDX:GPL-2.0-or-later"
+            ],
+            "copyright": [
+                "2022-2024 Damien Picard"
+            ],
+            "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/per_camera_resolution.zip",
+            "archive_hash": "sha256:445754830c405a81e9799fc70863ea183f1ccf25bc131a92b122afe8c1ea78eb",
+            "archive_size": 29822
+        },
+        {
+            "schema_version": "1.3.0",
+            "id": "quad_remeshers",
+            "name": "Quad Remeshers",
+            "version": "1.3.0",
+            "tagline": "Quad Remesher Bridges",
+            "maintainer": "Maxime",
+            "type": "add-on",
+            "tags": [
+                "Mesh"
+            ],
+            "blender_version_min": "2.80.0",
+            "license": [
+                "SPDX:GPL-2.0-or-later"
+            ],
+            "website": "https://exoside.com/quadremesher/quadremesher-troubleshooting/",
+            "copyright": [
+                "blender"
+            ],
+            "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/Quad_Remesher.zip",
+            "archive_hash": "sha256:140c8c6133c3f3040c189c8777011314151ee0e0712ceafcbf72db01e97e18ab",
+            "archive_size": 15770384
+        },
+        {
+            "schema_version": "1.1",
+            "id": "utilities_gadget",
+            "name": "Utilities Gadget",
+            "version": "1.1",
+            "tagline": "Utilities Gadget",
+            "maintainer": "INEINST MACH",
+            "type": "add-on",
+            "tags": [
+                "Mesh"
+            ],
+            "blender_version_min": "4.2.0",
+            "license": [
+                "SPDX:GPL-2.0-or-later"
+            ],
+            "website": "https://github.com/hurcaguari/Blender-Utilities-Gadget",
+            "copyright": [
+                "blender"
+            ],
+            "archive_url": "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/Utilities_Gadget.zip",
+            "archive_hash": "sha256:93dcb9dbd9a3d31faeb2d054c8e569eaf22c9eee58cadcb1c2ffb3872dba6e4a",
+            "archive_size": 5341
+        }
+    ],
+    "version": "v1"
+}
