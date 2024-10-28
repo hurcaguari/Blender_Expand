@@ -3,7 +3,6 @@
 # former: MainFest/tool.py
 
 from os import makedirs as make_dirs
-from os.path import normpath
 from os.path import exists as path_exists
 from os.path import join as path_join
 from os.path import dirname as dir_name
@@ -29,7 +28,7 @@ from .fileio import zipDir
 from .fileio import unzipFile
 from .fileio import DownloadFile
 from .fileio import write_json
-from .giturl import serach_git
+from .giturl import SerachGit
 from .giturl import clone_or_pull_repo as PullRepo
 from .giturl import get_url_from_dict
 
@@ -120,7 +119,7 @@ def normalize_plugin_info(info:tuple, expand_path:str,dow_url:str):
     if urlparse(dow_url) != 'github.com':
         url = dow_url
     else:
-        url = init_urls[0] if init_urls else serach_git(bl_info['name'],CONFIG.retry)['html_url']
+        url = init_urls[0] if init_urls else SerachGit(bl_info['name'],CONFIG.retry)['html_url']
     out_dict = {
         "schema_version": '.'.join(map(str, bl_info['version'])),
         "id": bl_info['name'].lower().replace(' ','_'),
@@ -219,7 +218,7 @@ def ConstrucatJson(data:dict,path:str) -> dict:
     data['archive_size'] = path_size(zip_file)
     data['website']  = '' if not 'website' in data else data['website']
     if not data['website']:
-        data['website'] = serach_git(data['id'],config=CONFIG.retry)['html_url']
+        data['website'] = SerachGit(data['id'],config=CONFIG.retry)['html_url']
         data['website'] = LoadFile(path_join(path,'__init__.py'),find='bl_info') if not data['website'] else data['website']
         data['website'] = data['website']['doc_url'] if 'doc_url' in data['website'] else get_url_from_dict(data['id'])
         print(f'{TimeStamp()} [INFO] 未找到网站链接，使用默认链接: {data["website"]}')
@@ -259,7 +258,7 @@ def ConstructApi(api_file:str) -> dict:
     for name in addons:
         addon = addons[name]
         if addon['path_type'] == 'git':
-            url = serach_git(name,CONFIG.retry)['html_url'] if not addon['path'] else addon['path']
+            url = SerachGit(name,CONFIG.retry)['html_url'] if not addon['path'] else addon['path']
             exp_path = path_join(CONFIG.expand_path,name)
             repo = PullRepo(url,exp_path)
             toml = ConstrucatToml(exp_path,url) if repo else None

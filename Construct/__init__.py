@@ -9,6 +9,7 @@
 from .fileio import LoadFile, FindFile
 from .tool import ConstructApi, DownloadFile
 from .utils import CONFIG, FindHash, TimeStamp
+from .giturl import SerachGit
 
 __all__ = [
     "LoadFile",
@@ -17,5 +18,6 @@ __all__ = [
     "DownloadFile",
     "CONFIG",
     "FindHash",
-    "TimeStamp"
+    "TimeStamp",
+    "SerachGit"
 ]

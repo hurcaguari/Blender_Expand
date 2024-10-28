@@ -91,7 +91,19 @@ def get_url_from_dict(name):
             print(f'{TimeStamp()} [ERRO] 查找失败: NMAE: {name} FULL_NAME: {e}')
             return None
 
-def serach_git(variable,config=None):
+def run_git_command(command):
+    """
+    执行 git 命令
+    :param command: 要执行的 git 命令
+    :return: 无
+    """
+    try:
+        result = subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        print(f"{TimeStamp()} [GITS] 执行命令: {command}")
+    except subprocess.CalledProcessError as e:
+        print(f"{TimeStamp()} [ERRO] 执行错误: {remove_newlines(e.stderr)}")
+
+def SerachGit(variable,config=None):
     """
     搜索存储库
     :param variable: 搜索关键字
@@ -108,21 +120,9 @@ def serach_git(variable,config=None):
                 print(f'{TimeStamp()} [GITS] 搜索成功: NMAE: {git_data['name']} HTML_URL: {git_data['html_url']}')
                 return {'name':out_name,'html_url':git_data['html_url'],'full_name':git_data['full_name']}
             elif not variable.lower() in git_data['name'].lower():
-                return serach_git(variable.replace('_', ' '),config)
+                return SerachGit(variable.replace('_', ' '),config)
             else:
                 continue
         sleep(config['retry_interval'])
     print(f'{TimeStamp()} [ERRO] 搜索失败: NMAE: {out_name} FULL_NAME: None')
     return {'name':out_name,'html_url':"",'full_name':""} # if not out_data['full_name'] else out_data
-
-def run_git_command(command):
-    """
-    执行 git 命令
-    :param command: 要执行的 git 命令
-    :return: 无
-    """
-    try:
-        result = subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        print(f"{TimeStamp()} [GITS] 执行命令: {command}")
-    except subprocess.CalledProcessError as e:
-        print(f"{TimeStamp()} [ERRO] 执行错误: {remove_newlines(e.stderr)}")
