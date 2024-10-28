@@ -1,0 +1,18 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Clean Directories",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-Command",
+                "Remove-Item -Recurse -Force data_zip, expand_data, api_json/*"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}
