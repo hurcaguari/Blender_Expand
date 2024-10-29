@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Clean Directories",
+            "label": "清理无用目录",
             "type": "shell",
             "command": "powershell",
             "args": [
@@ -10,12 +10,12 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-Command",
-                "Remove-Item -Recurse -Force data_zip, expand_data, api_json/*, data/, *.tar"
+                "Remove-Item -Recurse -Force data_zip, expand_data, api_json/*, data/, *.tar, temp/"
             ],
             "problemMatcher": []
         },
         {
-            "label": "Construct Docker Image",
+            "label": "Docker镜像生成与推送",
             "type": "shell",
             "command": "./docker_build.bat",
             "problemMatcher": [],

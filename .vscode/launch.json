@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Flask",
+            "name": "项目调试",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/api.py",

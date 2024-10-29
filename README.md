@@ -6,12 +6,6 @@ Blender 插件扩展管理系统是一个用于管理和更新 Blender 插件的
 项目的目录结构如下：
 
 ```
-__release__/
-.gitignore
-.vscode/
-	launch.json
-	settings.json
-	tasks.json
 api_json/
 	expand.json
 api.py
@@ -26,25 +20,6 @@ Construct/
 	giturl.py
 	tool.py
 	utils.py
-data/
-docker_build.bat
-dockerfile
-expand_data/
-	Auto_Highlight_in_Outliner/
-		__init__.py
-		blender_manifest.toml
-	Drop_it/
-		...
-	FlaresWizard/
-	FlowProManager/
-	io_scene_max/
-	LiquiFeel/
-	looptools/
-	Quad_Remesher/
-	utilities_gadget/
-README.md
-requirements.txt
-temp/
 ```
 
 #### 主要功能
@@ -86,24 +61,12 @@ config.toml
 
 #### 使用方法
 1. **环境配置**：
-    - 通过 
-
-config.sh
-
- 脚本生成 
-
-config.toml
-
- 配置文件。
+    - 通过 config.sh 脚本生成 config.toml 配置文件。
     - 配置环境变量以适应不同的运行环境。
 
 2. **启动应用**：
     - 使用 Docker 构建和运行应用。
-    - 通过 
-
-docker_build.bat
-
- 脚本进行 Docker 镜像的构建和保存。
+    - 通过 docker_build.bat 脚本进行 Docker 镜像的构建和保存。
 
 3. **访问 API**：
     - 通过 `/upexpand` 路由更新插件列表。
@@ -113,21 +76,13 @@ docker_build.bat
 #### 详细步骤
 1. **配置环境**：
     - 确保已安装 Docker 和 Docker Compose。
-    - 运行 
-
-config.sh
-
- 脚本生成配置文件：
+    - 运行 config.sh 脚本生成配置文件：
       ```sh
       ./config.sh
       ```
 
 2. **构建 Docker 镜像**：
-    - 运行 
-
-docker_build.bat
-
- 脚本构建 Docker 镜像：
+    - 运行 docker_build.bat 脚本构建 Docker 镜像：
       ```sh
       ./docker_build.bat
       ```
@@ -146,11 +101,7 @@ docker_build.bat
       - `/data/<filename>`：获取插件文件。
 
 #### 示例代码
-以下是 
-
-api.py
-
- 文件的关键部分代码：
+以下是 api.py 文件的关键部分代码：
 
 ```python
 from flask import Flask, request, jsonify, send_file, make_response
