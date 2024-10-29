@@ -4,7 +4,6 @@ expand_zip = "data"
 expand_tmp = "temp"
 api_json = "api_json"
 updates = 86400
-maintainer = "hurcaguari"
 
 [retry]
 retry_ints = 10

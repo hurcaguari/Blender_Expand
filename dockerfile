@@ -1,3 +1,4 @@
+# 使用 Python 3.12 的 Alpine 版本作为基础镜像
 FROM python:3.12-alpine
 
 # 设置环境变量
@@ -16,22 +17,28 @@ ENV RETRY_INTERVAL=5
 # 设置工作目录
 WORKDIR ${APP_PATH}
 
-# 复制当前目录的内容到工作目录
+# 复制 requirements.txt 文件到工作目录
 COPY ./requirements.txt ${APP_PATH}/requirements.txt
+
+# 复制 api.py 文件到工作目录
 COPY ./api.py ${APP_PATH}/api.py
+
+# 复制 Dockerfile 到工作目录
 COPY ./dockerfile ${APP_PATH}/dockerfile
+
+# 复制 config.sh 脚本到工作目录
 COPY ./config.sh ${APP_PATH}/config.sh
 
-# 拷贝文件夹
+# 拷贝 Construct 文件夹到工作目录
 COPY ./Construct ${APP_PATH}/Construct
 
-# 创建文件夹
+# 创建必要的文件夹
 RUN mkdir -p ${EXPAND_DATA} ${EXPAND_ZIP} ${APP_PATH}/api_json
 
 # 赋予 config.sh 可执行权限并运行脚本
 RUN chmod +x ${APP_PATH}/config.sh && ${APP_PATH}/config.sh
 
-# 安装依赖
+# 更新包索引并安装 git
 RUN apk update && apk add --no-cache git
 
 # 安装 Python 依赖

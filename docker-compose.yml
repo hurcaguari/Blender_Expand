@@ -1,0 +1,25 @@
+version: '3.8'  # 指定 Docker Compose 文件的版本
+
+services:
+  blender_expand:
+    image: hurcaguari/expand:arm64  # 使用名为 blender_expand:arm64 的镜像
+    environment:
+      - PYTHONUNBUFFERED=1  # 禁用 Python 输出缓冲
+      - HOST=127.0.0.1  # 设置主机地址
+      - PORT=8165  # 设置端口号
+      - API_JSON=/opt/app/api_json  # 设置 API JSON 路径
+      - APP_PATH=/opt/app  # 设置应用程序路径
+      - EXPAND_ZIP=/opt/app/data  # 设置数据路径
+      - EXPAND_DATA=/opt/app/expand_data  # 设置扩展数据路径
+      - EXPAND_TMP=/opt/app/temp  # 设置临时文件路径
+      - UPDATES=1800  # 设置更新频率
+      - RETRY_INTS=5  # 设置重试次数
+      - RETRY_INTERVAL=5  # 设置重试间隔
+    volumes:
+      - ./api_json:/opt/app/api_json  # 将主机的 api_json 目录挂载到容器的 /opt/app/api_json 目录
+      - ./data:/opt/app/data  # 将主机的 data 目录挂载到容器的 /opt/app/data 目录
+      - ./expand_data:/opt/app/expand_data  # 将主机的 expand_data 目录挂载到容器的 /opt/app/expand_data 目录
+      - ./temp:/opt/app/temp  # 将主机的 temp 目录挂载到容器的 /opt/app/temp 目录
+    ports:
+      - "8165:8165"  # 将主机的 8165 端口映射到容器的 8165 端口
+    command: ["sh", "-c", "python api.py"]  # 容器启动时运行的命令
