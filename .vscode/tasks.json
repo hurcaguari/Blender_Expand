@@ -10,7 +10,7 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-Command",
-                "Remove-Item -Recurse -Force data_zip, expand_data, api_json/*, data/"
+                "Remove-Item -Recurse -Force data_zip, expand_data, api_json/*, data/, *.tar"
             ],
             "problemMatcher": []
         },
