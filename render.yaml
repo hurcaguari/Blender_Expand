@@ -7,16 +7,12 @@ services:
   plan: free
   envVars:
   - key: HOST
-    sync: false
     value: '127.0.0.1'
   - key: PORT
     value: '8165'
-    sync: false
   - key: PYTHONUNBUFFERED
     value: '1'
-    sync: false
   - key: PYTHON_VERSION
-    sync: true
     value: '3.11.9'
   region: singapore
   buildCommand: pip install -r requirements.txt
