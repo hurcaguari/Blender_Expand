@@ -7,7 +7,7 @@ services:
   plan: free
   envVars:
   - key: HOST
-    value: '127.0.0.1'
+    value: '0.0.0.0'
   - key: PORT
     value: '8165'
   - key: PYTHONUNBUFFERED
