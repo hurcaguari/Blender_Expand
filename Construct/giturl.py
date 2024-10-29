@@ -11,6 +11,28 @@ from os.path import exists
 from os import listdir
 import subprocess
 
+def clone_specific_directory(repo_url, dest_path, directory, branch = None):
+    """
+    克隆仓库中特定目录
+    :param repo_url: 仓库 URL
+    :param branch: 分支名称
+    :param directory: 要拉取的目录
+    :param dest_path: 目标路径
+    :return: 无
+    """
+    
+    branch = branch if branch else 'main'
+    # 克隆仓库但不检出文件
+    run_git_command(['git', 'clone', '--no-checkout', '--depth', '1', '--branch', branch, repo_url, dest_path])
+    
+    # 配置 sparse-checkout
+    run_git_command(['git', 'sparse-checkout', 'init', '--cone'], cwd=dest_path)
+    run_git_command(['git', 'sparse-checkout', 'set', directory], cwd=dest_path)
+    
+    # 检出指定目录
+    run_git_command(['git', 'checkout'], cwd=dest_path)
+    return FindFile(dest_path,'__init__.py')
+
 def clone_or_pull_repo(repo_url, repo_path):
     """
     拉取或克隆存储库

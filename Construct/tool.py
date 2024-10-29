@@ -65,10 +65,7 @@ def normalize_plugin_structure(mainifest:tuple, expand_path:str, exp_path:str):
     path = dir_name(mainifest[0])
     expand_path = base_name(path)
     expand_path = path_join(CONFIG.expand_path,expand_path)
-    # x = move_files_to_directory(path,expand_path)
-    # remove(exp_path) if len(path_split(path)) > 2 else None
     return move_files_to_directory(path,expand_path)
-    pass
 
 
 def find_urls_in_dict(data):
@@ -108,12 +105,14 @@ def normalize_plugin_info(info:tuple, expand_path:str,dow_url:str):
         url = dow_url
     else:
         url = init_urls[0] if init_urls else SerachGit(bl_info['name'],CONFIG.retry)['html_url']
-    if not len(bl_info['version']) == 3:
+    if len(bl_info['version']) < 3:
         ins = 3-len(bl_info['version'])
         versions = list(bl_info['version'])
         for i in range(ins):
             versions.append(0)
         version = '.'.join(map(str, (versions)))
+    elif len(bl_info['version']) > 3:
+        version = '.'.join(map(str, bl_info['version'][:3]))
     else:
         version = '.'.join(map(str, bl_info['version']))
     out_dict = {

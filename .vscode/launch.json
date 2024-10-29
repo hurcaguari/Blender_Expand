@@ -16,7 +16,7 @@
             },
             "jinja": true,
             "justMyCode": true,
-            "preLaunchTask": "Clean Directories"
+            "preLaunchTask": "清理无用目录"
         }
     ]
 }

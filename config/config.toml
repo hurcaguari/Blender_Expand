@@ -44,3 +44,7 @@ path = "http://blender4.com/add-ons/flowpromanager/4.1.0/download/add-on-flowpro
 [addons.FlaresWizard]
 path_type = "url"
 path = "http://blender4.com/add-ons/flareswizard/3.2.0/download/add-on-flareswizard-v3.2.0.zip"
+
+[addons.Miku_Miku_Rig]
+path_type = "git"
+path = ""
