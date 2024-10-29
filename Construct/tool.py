@@ -28,6 +28,7 @@ from .fileio import zipDir
 from .fileio import unzipFile
 from .fileio import DownloadFile
 from .fileio import write_json
+from .fileio import move_files_to_directory
 from .giturl import SerachGit
 from .giturl import clone_or_pull_repo as PullRepo
 from .giturl import get_url_from_dict
@@ -52,25 +53,7 @@ def normalize_and_validate_url(url):
         raise ValueError(f"{TimeStamp()} [DOWN] URL '{url}' 不合法")
     return urlunparse(parsed_url)
 
-def move_files_to_directory(src_folder, dest_folder):
-    """
-    将目录下的所有文件移动到目标路径
-    :param src_folder: 源文件夹路径
-    :param dest_folder: 目标文件夹路径
-    :return: 无
-    """
-    if src_folder == dest_folder:
-        return None
-    if not path_exists(dest_folder):
-        makedirs(dest_folder)
-    
-    for filename in listdir(src_folder):
-        src_file = path_join(src_folder, filename)
-        dest_file = path_join(dest_folder, filename)
-        rename(src_file, dest_file)
-    print(f"{TimeStamp()} [INFO] 移动文件: {src_folder} 到 {dest_folder}")
-    delete(src_folder)
-    return {'path':dest_folder,'init':dest_file}
+
 
 
 def normalize_plugin_structure(mainifest:tuple, expand_path:str, exp_path:str):
@@ -120,15 +103,24 @@ def normalize_plugin_info(info:tuple, expand_path:str,dow_url:str):
     path = dir_name(info)
     bl_info = LoadFile(info,find='bl_info')
     init_urls = find_urls_in_dict(bl_info)
+
     if urlparse(dow_url) != 'github.com':
         url = dow_url
     else:
         url = init_urls[0] if init_urls else SerachGit(bl_info['name'],CONFIG.retry)['html_url']
+    if not len(bl_info['version']) == 3:
+        ins = 3-len(bl_info['version'])
+        versions = list(bl_info['version'])
+        for i in range(ins):
+            versions.append(0)
+        version = '.'.join(map(str, (versions)))
+    else:
+        version = '.'.join(map(str, bl_info['version']))
     out_dict = {
-        "schema_version": '.'.join(map(str, bl_info['version'])),
+        "schema_version": version if 'version' in bl_info else '1.0.0',
         "id": bl_info['name'].lower().replace(' ','_'),
         "name": bl_info['name'],
-        "version": '.'.join(map(str, bl_info['version'])),
+        "version": version if 'version' in bl_info else '1.0.0',
         "tagline": bl_info['description'],
         "maintainer": bl_info['author'],
         "type": "add-on",

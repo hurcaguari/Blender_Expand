@@ -13,6 +13,16 @@
                 "Remove-Item -Recurse -Force data_zip, expand_data, api_json/*, data/"
             ],
             "problemMatcher": []
+        },
+        {
+            "label": "Construct Docker Image",
+            "type": "shell",
+            "command": "./docker_build.bat",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }

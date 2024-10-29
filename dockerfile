@@ -26,7 +26,7 @@ COPY ./config.sh ${APP_PATH}/config.sh
 COPY ./Construct ${APP_PATH}/Construct
 
 # 创建文件夹
-RUN mkdir -p ${EXPAND_DATA} ${DATA_ZIP} ${APP_PATH}/api_json
+RUN mkdir -p ${EXPAND_DATA} ${EXPAND_ZIP} ${APP_PATH}/api_json
 
 # 赋予 config.sh 可执行权限并运行脚本
 RUN chmod +x ${APP_PATH}/config.sh && ${APP_PATH}/config.sh

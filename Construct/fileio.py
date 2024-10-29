@@ -17,15 +17,18 @@ from ast import FunctionDef as ast_FunctionDef
 
 from os import makedirs as make_dirs
 from os.path import normpath
+from os.path import split as path_split
 from os.path import exists as path_exists
 from os.path import join as path_join
 from os.path import basename as base_name
 from os.path import splitext as path_name
 from os.path import splitext as path_splitext
+from os.path import dirname as dir_name
 from os import walk as os_walk
 from os import path as os_path
 from os import makedirs
-from os import walk
+from os import listdir
+from os import rename
 
 from requests import get as get_request
 from requests.exceptions import ConnectionError
@@ -33,6 +36,42 @@ from shutil import rmtree as delete
 import zipfile
 from .utils import TimeStamp
 from .utils import CONFIG
+
+def move_files_to_parent_directory(src_folder):
+    """
+    将目录中的所有文件移动到上一级目录
+    :param src_folder: 源文件夹路径
+    :return: 无
+    """
+    parent_folder = dir_name(src_folder)
+    
+    if not path_exists(parent_folder):
+        print(f"{TimeStamp()} [ERRO] 父目录不存在: {parent_folder}")
+        return {'path':parent_path,'init':FindFile(parent_path,'__init__.py')[0]}
+    
+    for filename in listdir(src_folder):
+        src_file = path_join(src_folder, filename)
+        dest_file = path_join(parent_folder, filename)
+        rename(src_file, dest_file)
+        print(f"{TimeStamp()} [INFO] 移动文件: {src_file} 到 {dest_file}")
+    
+    delete(src_folder)
+    print(f"{TimeStamp()} [INFO] 删除目录: {src_folder}")
+    parent_path, _ = path_split(src_folder)
+    return {'path':parent_path,'init':FindFile(parent_path,'__init__.py')[0]}
+
+
+def move_files_to_directory(src_folder, dest_folder,moved = True) -> dict:
+    """
+    将目录下的所有文件移动到目标路径
+    :param src_folder: 源文件夹路径
+    :param dest_folder: 目标文件夹路径
+    :return: 无
+    """
+    if src_folder == dest_folder:
+        return {'path':dest_folder,'init':FindFile(dest_folder,'__init__.py')[0]}
+    else:
+        return move_files_to_parent_directory(src_folder)
 
 def load_toml_to_dict(file_path) -> dict:
     """
@@ -45,10 +84,10 @@ def load_toml_to_dict(file_path) -> dict:
             data = toml_load(file)
         return data
     except FileNotFoundError:
-        print(f"{TimeStamp} [ERRO] 文件丢失: {file_path}")
+        print(f"{TimeStamp()} [ERRO] 文件丢失: {file_path}")
         return {}
     except TomlDecodeError as e:
-        print(f"{TimeStamp} [INFO] 解码错误: {e}")
+        print(f"{TimeStamp()} [INFO] 解码错误: {e}")
         return {}
 
 def load_json_to_dict(file_path:str,find:str = None) -> dict:
@@ -157,7 +196,7 @@ def zipDir(dirpath, outFullName):
 
 
         zip = zipfile.ZipFile(outFullName, "w", zipfile.ZIP_DEFLATED)
-        for path, dirnames, filenames in walk(dirpath):
+        for path, dirnames, filenames in os_walk(dirpath):
             # 去掉目标跟路径，只对目标文件夹下边的文件及文件夹进行压缩
             fpath = path.replace(dirpath, '') #basename(dirpath)+'\\'+path.replace(dirpath, '')
             for filename in filenames:
