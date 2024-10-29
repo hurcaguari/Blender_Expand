@@ -13,7 +13,8 @@ services:
   - key: PYTHONUNBUFFERED
     sync: false
   - key: PYTHON_VERSION
-    sync: '3.12'
+    sync: true
+    value: '3.12'
   region: singapore
   buildCommand: pip install -r requirements.txt
   startCommand: sh -c python api.py
