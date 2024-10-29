@@ -19,8 +19,8 @@ path_type = "url"
 path = "http://blender4.com/add-ons/auto-highlight-in-outliner/3.8.2/download/add-on-auto-highlight-in-outliner-v3.8.2.zip"
 
 [addons.Drop_it]
-path_type = "url"
-path = "http://blender4.com/add-ons/drop-it/1.0.3/download/add-on-drop-it-v1.0.3.zip"
+path_type = "git"
+path = ""
 
 [addons.io_scene_max]
 path_type = "url"

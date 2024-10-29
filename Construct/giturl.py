@@ -99,7 +99,7 @@ def run_git_command(command):
     """
     try:
         result = subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        print(f"{TimeStamp()} [GITS] 执行命令: {command}")
+        print(f"{TimeStamp()} [GITS] 执行命令: {' '.join(command)}")
     except subprocess.CalledProcessError as e:
         print(f"{TimeStamp()} [ERRO] 执行错误: {remove_newlines(e.stderr)}")
 

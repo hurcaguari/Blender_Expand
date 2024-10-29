@@ -140,6 +140,9 @@ def unzipFile(zip_path, dest_folder):
     except zipfile.BadZipFile as e:
         print(f"{TimeStamp()} [ERRO] 解压失败: {zip_path} 到 {dest_folder}")
         return None
+    except FileNotFoundError as e:
+        print(f"{TimeStamp()} [ERRO] 文件丢失: {zip_path}")
+        return None
     return path_join(dest_folder,root_dir)
 
 def zipDir(dirpath, outFullName):
@@ -149,19 +152,22 @@ def zipDir(dirpath, outFullName):
     :param outFullName: 压缩文件保存路径+xxxx.zip
     :return: 无
     """
+    try:
+        make_dirs(os_path.dirname(outFullName)) if not path_exists(os_path.dirname(outFullName)) else None
 
-    make_dirs(os_path.dirname(outFullName)) if not path_exists(os_path.dirname(outFullName)) else None
 
-
-    zip = zipfile.ZipFile(outFullName, "w", zipfile.ZIP_DEFLATED)
-    for path, dirnames, filenames in walk(dirpath):
-        # 去掉目标跟路径，只对目标文件夹下边的文件及文件夹进行压缩
-        fpath = path.replace(dirpath, '') #basename(dirpath)+'\\'+path.replace(dirpath, '')
-        for filename in filenames:
-            zip.write(path_join(path, filename), path_join(fpath, filename))
-    zip.close()
-    print(f"{TimeStamp()} [UZIP] 压缩文件: {dirpath} 到 {outFullName}")
-    return outFullName
+        zip = zipfile.ZipFile(outFullName, "w", zipfile.ZIP_DEFLATED)
+        for path, dirnames, filenames in walk(dirpath):
+            # 去掉目标跟路径，只对目标文件夹下边的文件及文件夹进行压缩
+            fpath = path.replace(dirpath, '') #basename(dirpath)+'\\'+path.replace(dirpath, '')
+            for filename in filenames:
+                zip.write(path_join(path, filename), path_join(fpath, filename))
+        zip.close()
+        print(f"{TimeStamp()} [UZIP] 压缩文件: {dirpath} 到 {outFullName}")
+        return outFullName
+    except Exception as e:
+        print(f"{TimeStamp()} [ERRO] 压缩失败: {dirpath} 到 {outFullName}")
+        return None
 
 def write_json(data:dict, file_path:str):
     """
@@ -260,15 +266,15 @@ def DownloadFile(url, dest_folder):
     示例:
     >>> DownloadFile("http://example.com/file.zip", "/path/to/destination")
     """
+    file_name = path_join(dest_folder, url.split('/')[-1])
     if not path_exists(dest_folder):
         make_dirs(dest_folder)
     try:
         response = get_request(url, stream=True)
     except ConnectionError as e:
         print(f"{TimeStamp()} [ERRO] 下载失败: {url} {e}")
-        return None
+        return file_name
     if response.status_code == 200:
-        file_name = path_join(dest_folder, url.split('/')[-1])
         with open(file_name, 'wb') as file:
             for chunk in response.iter_content(chunk_size=1024):
                 if chunk:

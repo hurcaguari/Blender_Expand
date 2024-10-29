@@ -69,6 +69,8 @@ def move_files_to_directory(src_folder, dest_folder):
         dest_file = path_join(dest_folder, filename)
         rename(src_file, dest_file)
     print(f"{TimeStamp()} [INFO] 移动文件: {src_folder} 到 {dest_folder}")
+    delete(src_folder)
+    return {'path':dest_folder,'init':dest_file}
 
 
 def normalize_plugin_structure(mainifest:tuple, expand_path:str, exp_path:str):
@@ -80,8 +82,10 @@ def normalize_plugin_structure(mainifest:tuple, expand_path:str, exp_path:str):
     path = dir_name(mainifest[0])
     expand_path = base_name(path)
     expand_path = path_join(CONFIG.expand_path,expand_path)
-    move_files_to_directory(path,expand_path)
-    remove(exp_path) if len(path_split(path)) > 2 else None
+    # x = move_files_to_directory(path,expand_path)
+    # remove(exp_path) if len(path_split(path)) > 2 else None
+    return move_files_to_directory(path,expand_path)
+    pass
 
 
 def find_urls_in_dict(data):
@@ -113,8 +117,8 @@ def normalize_plugin_info(info:tuple, expand_path:str,dow_url:str):
     :param expand_path: 插件目录路径
     :return: 无
     """
-    path = dir_name(info[0])
-    bl_info = LoadFile(info[0],find='bl_info')
+    path = dir_name(info)
+    bl_info = LoadFile(info,find='bl_info')
     init_urls = find_urls_in_dict(bl_info)
     if urlparse(dow_url) != 'github.com':
         url = dow_url
@@ -190,8 +194,11 @@ def ConstrucatToml(exp_path: str, url: str) -> dict:
     if mainifest and initial:
         normalize_plugin_structure(mainifest,CONFIG.expand_path,exp_path)
     elif not mainifest:
-        normalize_plugin_structure(initial,CONFIG.expand_path,exp_path)
-        normalize_plugin_info(initial,CONFIG.expand_path,url)
+        upexp_path = normalize_plugin_structure(initial,CONFIG.expand_path,exp_path)
+        if upexp_path:
+            normalize_plugin_info(upexp_path['init'],CONFIG.expand_path,url)
+        else:
+            normalize_plugin_info(initial[0],CONFIG.expand_path,url)
     return LoadFile(path_join(exp_path,'blender_manifest.toml'))
 
 def ConstrucatJson(data:dict,path:str) -> dict:
