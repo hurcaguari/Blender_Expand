@@ -23,13 +23,10 @@ COPY ./api.py ${APP_PATH}/api.py
 # 复制 Dockerfile 到工作目录
 COPY ./dockerfile ${APP_PATH}/dockerfile
 
-# 复制 config.sh 脚本到工作目录
-COPY ./config.sh ${APP_PATH}/config.sh
-
 # 拷贝 Construct 文件夹到工作目录
 COPY ./Construct ${APP_PATH}/Construct
 
-COPY ./config ${APP_PATH}/config
+COPY ./render/config.toml ${APP_PATH}/config/config.toml
 
 # 创建必要的文件夹
 RUN mkdir -p ${EXPAND_DATA} ${EXPAND_ZIP} ${APP_PATH}/api_json
