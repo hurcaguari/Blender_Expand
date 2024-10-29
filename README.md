@@ -15,7 +15,6 @@ config/
 config.sh
 Construct/
 	__init__.py
-	__pycache__/
 	fileio.py
 	giturl.py
 	tool.py
