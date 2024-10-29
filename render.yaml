@@ -1,0 +1,24 @@
+# Exported from Render on 2024-10-29T06:41:51Z
+services:
+- type: web
+  name: Blender_Expand
+  runtime: python
+  repo: https://github.com/hurcaguari/Blender_Expand
+  plan: free
+  envVars:
+  - key: HOST
+    sync: false
+  - key: PORT
+    sync: false
+  - key: PYTHONUNBUFFERED
+    sync: false
+  region: singapore
+  buildCommand: pip install -r requirements.txt
+  startCommand: sh -c python api.py
+  buildFilter:
+    ignoredPaths:
+    - .vscode
+    - data
+    - temp
+    - expand_data
+version: "1"
