@@ -1,7 +1,15 @@
-docker login -u 
+@echo off
+echo docker µÇÂ¼
+docker login
+echo Éú³É requirements.txt
 pip freeze > requirements.txt
+echo É¾³ý¾É¾µÏñ
 docker rmi expand:arm64
+echo ¹¹½¨ÐÂ¾µÏñ
 docker buildx build --platform linux/arm64 -t expand:arm64 .
+echo ±£´æ¾µÏñ
 docker save -o expand_arm64.tar expand:arm64 
+echo ´ò±êÇ©
 docker tag expand:arm64 docker.io/hurcaguari/expand:arm64
+echo ÍÆËÍ¾µÏñ
 docker push docker.io/hurcaguari/expand:arm64
