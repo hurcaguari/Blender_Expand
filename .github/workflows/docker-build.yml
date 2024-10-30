@@ -42,7 +42,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6,linux/ppc64le,linux/s390x  # 指定要构建的架构
+        platforms: linux/amd64,linux/arm64  # 指定要构建的架构
         tags: ${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_TAG }}
 
     - name: 清理构建缓存
