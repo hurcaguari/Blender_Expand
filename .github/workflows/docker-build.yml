@@ -3,65 +3,46 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - main  # 当代码推送到 main 分支时触发工作流
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 指定运行作业的环境为最新的 Ubuntu
 
     env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_IMAGE_NAME: blender_expand
-      DOCKER_TAG: latest
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}  # 从 GitHub Secrets 中获取 Docker Hub 用户名
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}  # 从 GitHub Secrets 中获取 Docker Hub 密码
+      DOCKER_IMAGE_NAME: blender_expand  # 定义 Docker 镜像名称
+      DOCKER_TAG: latest  # 定义 Docker 镜像标签
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - name: 检出代码仓库
+      uses: actions/checkout@v2  # 使用 actions/checkout@v2 动作将代码库检出到工作流运行环境中
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+    - name: 设置构建动作
+      uses: docker/setup-buildx-action@v1  # 使用 docker/setup-buildx-action@v1 动作设置 Docker Buildx
 
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
+    - name: 登录Docker
+      uses: docker/login-action@v1  # 使用 docker/login-action@v1 动作登录到 Docker Hub
       with:
-        username: ${{ env.DOCKER_USERNAME }}
-        password: ${{ env.DOCKER_PASSWORD }}
+        username: ${{ env.DOCKER_USERNAME }}  # 使用环境变量中的 Docker Hub 用户名
+        password: ${{ env.DOCKER_PASSWORD }}  # 使用环境变量中的 Docker Hub 密码
 
-    - name: Cache Docker layers
-      uses: actions/cache@v4
+    - name: 缓存构建层
+      uses: actions/cache@v2  # 使用 actions/cache@v2 动作缓存 Docker 构建层
       with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        path: /tmp/.buildx-cache  # 缓存路径
+        key: ${{ runner.os }}-buildx-${{ github.sha }}  # 缓存键
         restore-keys: |
-          ${{ runner.os }}-buildx-
+          ${{ runner.os }}-buildx-  # 恢复键
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v4
+    - name: 构建并推送镜像
+      uses: docker/build-push-action@v2  # 使用 docker/build-push-action@v2 动作构建并推送 Docker 镜像
       with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        tags: ${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_TAG }}
+        context: .  # 构建上下文为当前目录
+        file: ./Dockerfile  # 指定 Dockerfile 文件路径
+        push: true  # 构建完成后推送镜像
+        tags: ${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_TAG }}  # 镜像标签
 
-    - name: Post build cleanup
-      run: docker builder prune --force
-
-  show-env-vars:
-    runs-on: ubuntu-latest
-
-    env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_IMAGE_NAME: blender_expand
-      DOCKER_TAG: latest
-      
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: 显示ENV所有变量
-      run: env
+    - name: 清理构建缓存
+      run: docker builder prune --force  # 运行 docker builder prune --force 命令清理构建数据
