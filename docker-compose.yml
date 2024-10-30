@@ -5,7 +5,7 @@ services:
     image: hurcaguari/expand:arm64  # 使用名为 blender_expand:arm64 的镜像
     environment:
       - PYTHONUNBUFFERED=1  # 禁用 Python 输出缓冲
-      - HOST=127.0.0.1  # 设置主机地址
+      - HOST=0.0.0.0  # 设置主机地址
       - PORT=8165  # 设置端口号
       - API_JSON=/opt/app/api_json  # 设置 API JSON 路径
       - APP_PATH=/opt/app  # 设置应用程序路径
