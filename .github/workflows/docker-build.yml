@@ -12,6 +12,12 @@ jobs:
   show-env-vars:
     runs-on: ubuntu-latest
 
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_IMAGE_NAME: blender_expand
+      DOCKER_TAG: latest
+      
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
