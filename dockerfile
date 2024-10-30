@@ -15,7 +15,7 @@ ENV RETRY_INTS=5
 ENV RETRY_INTERVAL=5
 
 # 创建非 root 用户和组
-RUN addgroup -S appgroup && adduser -S appuser -G expandg
+RUN addgroup -S expand && adduser -S expand -G expand
 
 # 设置工作目录
 WORKDIR ${APP_PATH}
@@ -48,10 +48,10 @@ RUN apk update && apk add --no-cache git
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 更改工作目录的所有权
-RUN chown -R appuser:appgroup ${APP_PATH}
+RUN chown -R expand:expand ${APP_PATH}
 
 # 切换到非 root 用户
-USER appuser
+USER expand
 
 # 暴露端口
 EXPOSE ${PORT}

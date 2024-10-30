@@ -11,9 +11,6 @@ ENV EXPAND_ZIP="/opt/app/data"
 ENV EXPAND_DATA="/opt/app/expand_data"
 ENV EXPAND_TMP="/opt/app/temp"
 
-# 创建非 root 用户和组
-RUN addgroup -S expand && adduser -S expand -G expand
-
 # 设置工作目录
 WORKDIR ${APP_PATH}
 
@@ -39,9 +36,6 @@ RUN apk update && apk add --no-cache git
 
 # 安装 Python 依赖
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
-
-# 切换到非 root 用户
-USER expand
 
 # 暴露端口
 EXPOSE ${PORT}
