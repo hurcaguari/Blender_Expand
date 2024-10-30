@@ -43,7 +43,7 @@ jobs:
           ${{ runner.os }}-buildx-
 
     - name: 构建并推送镜像
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@v5  # 更新到最新版本
       with:
         context: .
         file: ./Dockerfile
