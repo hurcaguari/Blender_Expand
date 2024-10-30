@@ -6,3 +6,4 @@ data/
 expand_data/
 temp/
 *.tar
+.devcontainer/
