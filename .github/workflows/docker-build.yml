@@ -61,7 +61,7 @@ jobs:
       
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
-    - name: Show all environment variables
+    - name: 显示ENV所有变量
       run: env
