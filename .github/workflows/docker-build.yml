@@ -2,8 +2,14 @@ name: 构建Docker镜像推送
 
 on:
   push:
-    branches:
+    branches: 
       - main
+    paths:
+      - Construct/*
+      - dockerfile
+      - api.py
+      - requirements.txt  
+      - config/config.yaml
 
 jobs:
   build:
