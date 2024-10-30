@@ -1,5 +1,5 @@
 # 使用 Python 3.12 的 Alpine 版本作为基础镜像
-FROM python:3.12-alpine
+FROM python:3.13.0-alpine
 
 # 设置环境变量
 ENV PYTHONUNBUFFERED=1
