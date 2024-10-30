@@ -1,4 +1,4 @@
-# 使用 Python 3.12 的 Alpine 版本作为基础镜像
+# 使用 Python 3.13 的 Alpine 版本作为基础镜像
 FROM python:3.13.0-alpine
 
 # 设置环境变量
@@ -13,6 +13,9 @@ ENV EXPAND_TMP="/opt/app/temp"
 ENV UPDATES=1800
 ENV RETRY_INTS=5
 ENV RETRY_INTERVAL=5
+
+# 创建非 root 用户和组
+RUN addgroup -S appgroup && adduser -S appuser -G expandg
 
 # 设置工作目录
 WORKDIR ${APP_PATH}
@@ -44,8 +47,14 @@ RUN apk update && apk add --no-cache git
 # 安装 Python 依赖
 RUN pip install --no-cache-dir -r requirements.txt
 
+# 更改工作目录的所有权
+RUN chown -R appuser:appgroup ${APP_PATH}
+
+# 切换到非 root 用户
+USER appuser
+
 # 暴露端口
 EXPOSE ${PORT}
 
 # 运行 Flask 应用
-CMD ["sh", "-c", "python api.py"]
+CMD ["python", "api.py"]
