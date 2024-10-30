@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: 构建Docker镜像推送
 
 on:
   push:
