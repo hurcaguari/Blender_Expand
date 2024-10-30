@@ -42,7 +42,8 @@ jobs:
         context: .  
         file: ./Dockerfile  
         push: true  
+        platforms: linux/amd64,linux/arm64,linux/386,windows/amd64,linux/ppc64le  # 指定要构建的架构
         tags: ${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_TAG }}  
 
     - name: 清理构建缓存
-      run: docker builder prune --force  
+      run: docker builder prune --force
