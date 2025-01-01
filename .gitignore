@@ -1,1 +1,9 @@
-*/__pycache__
+api_json/expand.json
+.venv/
+.git/
+*/__pycache__/
+data/
+expand_data/
+temp/
+*.tar
+.devcontainer/

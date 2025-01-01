@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "项目调试",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/api.py",
+            "args": [
+                "--host", "0.0.0.0",
+                "--port", "8000"
+            ],
+            "env": {
+                "FLASK_APP": "${workspaceFolder}/api.py",
+                "FLASK_ENV": "development"
+            },
+            "jinja": true,
+            "justMyCode": true,
+            "preLaunchTask": "清理无用目录"
+        }
+    ]
+}
