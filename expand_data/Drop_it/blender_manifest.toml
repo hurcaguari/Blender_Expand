@@ -1,12 +1,12 @@
-schema_version = "1.2"
+schema_version = "1.2.0"
 id = "drop_it"
 name = "Drop It"
-version = "1.2"
+version = "1.2.0"
 tagline = "Drop Objects to Ground or Surface"
-maintainers = "Andreas Aust"
+maintainer = "Andreas Aust"
 type = "add-on"
 tags = [ "Object",]
 blender_version_min = "2.80.0"
 license = [ "SPDX:GPL-2.0-or-later",]
-website = "https://blenderartists.org/t/drop-it-free-addon/1244259"
+website = "https://github.com/hannesdelbeke/drop-it-blender-addon"
 copyright = [ "blender",]

@@ -4,7 +4,7 @@
 
 
 __author__ = "Sebastian Sille <nrgsille@gmail.com>"
-__version__ = "1.5.2"
+__version__ = "1.6.0"
 __date__ = "18 Nov 2023"
 
 
@@ -58,11 +58,12 @@ class ImportMax(bpy.types.Operator, ImportHelper):
         name="Object Filter", options={'ENUM_FLAG'},
         items=(('MATERIAL', "Material".rjust(12), "", 'MATERIAL_DATA', 0x1),
                ('UV', "UV Maps".rjust(11), "", 'UV_DATA', 0x2),
-               ('EMPTY', "Empty".rjust(11), "", 'EMPTY_AXIS', 0x4),
-               ('ARMATURE', "Armature".rjust(11), "", 'ARMATURE_DATA', 0x8),
+               ('PRIMITIVE', "Primitive".rjust(13), "", 'CUBE', 0x4),
+               ('EMPTY', "Empty".rjust(11), "", 'EMPTY_AXIS', 0x8),
+               ('ARMATURE', "Armature".rjust(11), "", 'ARMATURE_DATA', 0x10),
                ),
         description="Object types to import",
-        default={'MATERIAL', 'UV', 'EMPTY', 'ARMATURE'},
+        default={'MATERIAL', 'UV', 'PRIMITIVE', 'EMPTY', 'ARMATURE'},
     )
     use_collection: BoolProperty(
         name="Collection",

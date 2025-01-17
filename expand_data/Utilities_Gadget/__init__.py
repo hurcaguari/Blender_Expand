@@ -14,12 +14,12 @@
 bl_info = {
     "name": "Utilities Gadget",
     "author": "INEINST MACH",
-    "version": (1, 1),
+    "version": (1, 1, 0),
     "blender": (4, 2, 0),
     "location": "View3D",
     "description": "Utilities Gadget",
     "warning": "",
-    "doc_url": "https://github.com/hurcaguari/Blender-Utilities-Gadget",
+    "doc_url": "",
     "category": "Mesh",
 }
 

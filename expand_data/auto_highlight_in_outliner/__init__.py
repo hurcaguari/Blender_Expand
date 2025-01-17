@@ -3,12 +3,12 @@ bl_info = {
     "author": "Amandeep",
     "description": "Automatically highlight selected objects in the outliner",
     "blender": (3, 5, 0),
-    "version": (3, 5, 0),
+    "version": (3, 8, 2),
     "location": "",
     "warning": "",
     "category": "Object",
 }
-__version__ = bl_info["version"]
+
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
@@ -24,9 +24,10 @@ __version__ = bl_info["version"]
 
 import bpy
 from bpy.app.handlers import persistent
-from .addon_update_checker import *
 import rna_keymap_ui
+import os
 import textwrap
+from pathlib import Path
 def draw_hotkeys(col,km_name):
     kc = bpy.context.window_manager.keyconfigs.user
     for kmi in [a.idname for b,a in addon_keymaps]:
@@ -42,21 +43,24 @@ def draw_hotkeys(col,km_name):
 def preferences():
     return bpy.context.preferences.addons[__package__].preferences
 def savePreferences():
-    if not os.path.isdir(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "config")):
-        os.mkdir(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__))))), "config"))
-    with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "config", "AH-Config.txt"), mode='w+', newline='\n', encoding='utf-8') as file:
+    config_dir=Path(bpy.utils.user_resource('SCRIPTS')).parent/"config"
+    config_path=config_dir/"TA-Config.txt"
+    if not os.path.isdir(config_dir):
+        os.makedirs(config_dir)
+    
+    with open(config_path, mode='w+', newline='\n', encoding='utf-8') as file:
         for p in preferences().__annotations__.keys():
             
             file.write(f"{p}=>{type(getattr(preferences(),p,'str')).__name__}==={getattr(preferences(),p)}\n")
 
 
 def loadPreferences():
-    if not os.path.isdir(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "config")):
-        os.mkdir(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__))))), "config"))
-    if os.path.isfile(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "config", "AH-Config.txt")):
-        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "config", "AH-Config.txt"), mode='r', newline='\n', encoding='utf-8') as file:
+    config_dir=Path(bpy.utils.user_resource('SCRIPTS')).parent/"config"
+    config_path=config_dir/"TA-Config.txt"
+    if not os.path.isdir(config_dir):
+        os.makedirs(config_dir)
+    if os.path.isfile(config_path):
+        with open(config_path, mode='r', newline='\n', encoding='utf-8') as file:
             prefs = file.readlines()
             for p in reversed(prefs):
                 try:
@@ -73,26 +77,25 @@ def loadPreferences():
                         setattr(preferences(), attr,value)
                 except Exception as e:
                     pass
-class AHPrefs(bpy.types.AddonPreferences,AddonUpdateChecker):
+class AHPrefs(bpy.types.AddonPreferences):
     bl_idname = __package__
-    expand_all_selected:bpy.props.BoolProperty(default=True,name="Keep all selected objects expanded when using 'Collapse other collections'",description='Enabling this option will expand all selected objects in the outliner. Disabling it will only expand the active object.')
-    expand_bones:bpy.props.BoolProperty(default=False,name='Expand to show selected bones in Pose mode')
+    expand_all_selected:bpy.props.BoolProperty(default=True,name="使用 “折叠其他集合” 时保持所有选定对象处于展开状态",description='启用此选项将展开 “大纲视图” (outliner) 中的所有选定对象。禁用它只会扩展活动对象。')
+    expand_bones:bpy.props.BoolProperty(default=False,name='展开以在姿势模式下显示选定骨骼')
     ex:bpy.props.BoolProperty(name='Experimental',default=False)
-    show_actual_object_for_parented_objects:bpy.props.BoolProperty(default=True,name='Show actual object for parented objects',description='When disabled, the addon will expand to show the grayed out version of children objects (the ones shown under the parent object) instead of the actual object, which may be located in another collection. Enabling this option will display the actual object from the other collection instead.')
-    default_state:bpy.props.BoolProperty(default=True,name='Enable by default in all new scenes',description='This option allows you to set the starting state for new scenes. When enabled, auto highlight will be turned on by default for every new Blender scene you open.')
-    collapse_fix:bpy.props.BoolProperty(default=False,name="Enable if performance is slow when using 'Collapse other collections'")
-    max_objects_to_expand:bpy.props.IntProperty(default=10,min=1,max=999999,name="Objects limit")
+    show_actual_object_for_parented_objects:bpy.props.BoolProperty(default=False,name='为子对象显示实际对象',description='禁用时，插件将展开以显示子对象（父对象下显示的对象）的灰色版本，而不是可能位于另一个集合中的实际对象。启用此选项将显示其他集合中的实际对象。')
+    default_state:bpy.props.BoolProperty(default=True,name='默认情况下在所有新场景中启用',description='此选项允许您设置新场景的开始状态。启用后，默认情况下，自动突出显示将为您打开的每个新Blender场景打开。')
+    collapse_fix:bpy.props.BoolProperty(default=False,name="如果使用 “折叠其他集合” 时性能缓慢，则启用")
+    max_objects_to_expand:bpy.props.IntProperty(default=10,min=1,max=999999,name="物体数量限制")
     def draw(self, context):
-        draw_update_section_for_prefs(self.layout,context)
-        lines = textwrap.wrap('Ensure that both of these keymaps are set to correspond with the select button you utilize in the viewport and the outliner!',context.region.width/10 if context else 100, break_long_words=False)
+        lines = textwrap.wrap('确保这两个键映射都设置为与您在视口和大纲视图中使用的选择按钮相对应!',context.region.width/10 if context else 100, break_long_words=False)
         for i,l in enumerate(lines):
             self.layout.label(text=l,icon='INFO' if i==0 else 'NONE')
         draw_hotkeys(self.layout,"3D View")
         draw_hotkeys(self.layout,"Outliner")
         self.layout.prop(self,'default_state')
         self.layout.prop(self,'expand_all_selected')
-        self.layout.label(text="Maximum number of objects to expand in the outliner")
-        self.layout.label(text="(lower this if you are facing crashes when selecting a lot of objects)")
+        self.layout.label(text="要在 “大纲视图” (outliner) 中展开的最大物体数")
+        self.layout.label(text="(如果您在选择大量对象时面临崩溃，请降低此值)")
         self.layout.prop(self,'max_objects_to_expand')
         self.layout.prop(self,'show_actual_object_for_parented_objects')
         self.layout.prop(self,'ex',toggle=True,icon="DOWNARROW_HLT" if self.ex else "RIGHTARROW_THIN",emboss=False)
@@ -108,9 +111,26 @@ def enable_filter_children(area,filter_children,filter_content):
     area.spaces.active.use_filter_children=filter_children
     area.spaces.active.use_filter_object_content=filter_content
     return None
-
-
+def show_active_again(active,override):
+    if bpy.context.mode=='OBJECT':
+        if True or not(active and active.parent and set(active.parent.users_collection)==set(active.users_collection)):
+            if bpy.context.view_layer.objects.active!=active:
+                bpy.context.view_layer.objects.active=active
+            with bpy.context.temp_override(**override):
+                bpy.ops.outliner.show_active()
+        bpy.context.view_layer.objects.active=active
+def collapse_outliner(override):
+    if not preferences().collapse_fix:
+        for i in range(15):
+            with bpy.context.temp_override(**override):
+                bpy.ops.outliner.show_one_level(open=False)
+    else:
+        with bpy.context.temp_override(**override):
+            bpy.ops.outliner.expanded_toggle()
+            bpy.ops.outliner.expanded_toggle()
 def show_active(active_bone, active, override,area,filter_children,filter_content):
+
+    
     if preferences().expand_all_selected:
         count=1
         if bpy.context.mode=='OBJECT':
@@ -130,21 +150,23 @@ def show_active(active_bone, active, override,area,filter_children,filter_conten
                         a.id_data.data.bones.active=a.bone
                         with bpy.context.temp_override(**override):
                             bpy.ops.outliner.show_active()
-    if bpy.context.mode=='OBJECT':
-        if not(active.parent and set(active.parent.users_collection)==set(active.users_collection)):
-            if bpy.context.view_layer.objects.active!=active:
-                bpy.context.view_layer.objects.active=active
-            with bpy.context.temp_override(**override):
-                bpy.ops.outliner.show_active()
-        bpy.context.view_layer.objects.active=active
+    # if bpy.context.mode=='OBJECT':
+    #     if not(active and active.parent and set(active.parent.users_collection)==set(active.users_collection)):
+    #         if bpy.context.view_layer.objects.active!=active:
+    #             bpy.context.view_layer.objects.active=active
+    #         with bpy.context.temp_override(**override):
+    #             bpy.ops.outliner.show_active()
+    #     bpy.context.view_layer.objects.active=active
     if preferences().expand_bones:
         if bpy.context.mode=='POSE' and active and active_bone:
             bpy.context.view_layer.objects.active=active_bone.id_data
             active_bone.id_data.data.bones.active=active_bone.bone
             with bpy.context.temp_override(**override):
                 bpy.ops.outliner.show_active()
+    
     area.spaces.active.use_filter_children=filter_children
     area.spaces.active.use_filter_object_content=filter_content
+    bpy.app.timers.register(functools.partial(show_active_again, active, override),first_interval=0.01)
     return None
 import functools
 import time
@@ -170,20 +192,24 @@ def highlight_in_outliner():
             
                 for area in win.screen.areas:
                     if 'OUTLINER' in area.type:
-                        if area.spaces and area.spaces.active and area.spaces.active.display_mode=='VIEW_LAYER':
+                        if area.spaces and area.spaces.active and area.spaces.active.display_mode in ['VIEW_LAYER','SCENES','LIBRARIES']:
                             for region in area.regions:
                                 if 'WINDOW' in region.type:
-                                    override = {'area': area, 'region': region}
+                                    override = {'window':win,'area': area, 'region': region}
 
                                     if bpy.context.scene.collapse_other_collections and bpy.context.selected_objects[:]:
-                                        if not preferences().collapse_fix:
-                                            for i in range(15):
+                                        if not preferences().show_actual_object_for_parented_objects:
+                                            if not preferences().collapse_fix:
+                                                for i in range(15):
+                                                    with bpy.context.temp_override(**override):
+                                                        bpy.ops.outliner.show_one_level(open=False)
+                                            else:
                                                 with bpy.context.temp_override(**override):
-                                                    bpy.ops.outliner.show_one_level(open=False)
-                                        else:
-                                            with bpy.context.temp_override(**override):
-                                                bpy.ops.outliner.expanded_toggle()
-                                                bpy.ops.outliner.expanded_toggle()
+                                                    bpy.ops.outliner.expanded_toggle()
+                                                    bpy.ops.outliner.expanded_toggle()
+                                            if area.spaces.active.display_mode=='LIBRARIES':
+                                                with bpy.context.temp_override(**override):
+                                                    bpy.ops.outliner.show_one_level(open=True)
                                     filter_children=area.spaces.active.use_filter_children
                                     filter_content=area.spaces.active.use_filter_object_content
                                     if has_parent and preferences().show_actual_object_for_parented_objects:
@@ -197,14 +223,15 @@ def highlight_in_outliner():
                                                         bpy.ops.outliner.show_active()
                                                     if count>preferences().max_objects_to_expand:
                                                         break
-                                        if bpy.context.mode=='OBJECT':
-                                            if active.parent and set(active.parent.users_collection)==set(active.users_collection):
-                                                if bpy.context.view_layer.objects.active!=active:
-                                                    bpy.context.view_layer.objects.active=active
-                                                with bpy.context.temp_override(**override):
-                                                    bpy.ops.outliner.show_active()
+                                        # if bpy.context.mode=='OBJECT':
+                                        #     if active and active.parent and set(active.parent.users_collection)==set(active.users_collection):
+                                        #         if bpy.context.view_layer.objects.active!=active:
+                                        #             bpy.context.view_layer.objects.active=active
+                                        #         with bpy.context.temp_override(**override):
+                                        #             bpy.ops.outliner.show_active()
                                         area.spaces.active.use_filter_children=False
-                                        # area.spaces.active.use_filter_object_content=False
+                                        area.spaces.active.use_filter_object_content=False
+                                        collapse_outliner(override)
                                         bpy.app.timers.register(functools.partial(show_active,active_bone, active, override,area,filter_children,filter_content),first_interval=0.02)
                                         
                                     else:
@@ -216,7 +243,13 @@ def highlight_in_outliner():
                                                         count+=1
                                                         bpy.context.view_layer.objects.active=a
                                                         with bpy.context.temp_override(**override):
-                                                            bpy.ops.outliner.show_active()
+                                                            if preferences().show_actual_object_for_parented_objects:
+                                                                area.spaces.active.use_filter_children=False
+                                                                area.spaces.active.use_filter_object_content=False
+                                                                collapse_outliner(override)
+                                                                bpy.app.timers.register(functools.partial(show_active,active_bone, active, override,area,filter_children,filter_content),first_interval=0.02)
+                                                            else:
+                                                                bpy.ops.outliner.show_active()
                                                         if count>preferences().max_objects_to_expand:
                                                             break
                                             if preferences().expand_bones:
@@ -226,21 +259,40 @@ def highlight_in_outliner():
                                                             bpy.context.view_layer.objects.active=a.id_data
                                                             a.id_data.data.bones.active=a.bone
                                                             with bpy.context.temp_override(**override):
-                                                                bpy.ops.outliner.show_active()
+                                                                if preferences().show_actual_object_for_parented_objects:
+                                                                    area.spaces.active.use_filter_children=False
+                                                                    area.spaces.active.use_filter_object_content=False
+                                                                    collapse_outliner(override)
+                                                                    bpy.app.timers.register(functools.partial(show_active,active_bone, active, override,area,filter_children,filter_content),first_interval=0.02)
+                                                                else:
+                                                                    bpy.ops.outliner.show_active()
                                                                             
                                         if bpy.context.mode=='OBJECT':
                                             if bpy.context.view_layer.objects.active!=active:
                                                 bpy.context.view_layer.objects.active=active
                                             with bpy.context.temp_override(**override):
-                                                bpy.ops.outliner.show_active()
+                                                
+                                                if preferences().show_actual_object_for_parented_objects:
+                                                    area.spaces.active.use_filter_children=False
+                                                    area.spaces.active.use_filter_object_content=False
+                                                    collapse_outliner(override)
+                                                    bpy.app.timers.register(functools.partial(show_active,active_bone, active, override,area,filter_children,filter_content),first_interval=0.02)
+                                                else:
+                                                    bpy.ops.outliner.show_active()
                                         if preferences().expand_bones:
                                             if bpy.context.mode=='POSE' and active and active_bone:
                                                 bpy.context.view_layer.objects.active=active_bone.id_data
                                                 active_bone.id_data.data.bones.active=active_bone.bone
                                                 with bpy.context.temp_override(**override):
-                                                    bpy.ops.outliner.show_active()
-                                        area.spaces.active.use_filter_children=filter_children
-                                        area.spaces.active.use_filter_object_content=filter_content
+                                                    if preferences().show_actual_object_for_parented_objects:
+                                                        area.spaces.active.use_filter_children=False
+                                                        area.spaces.active.use_filter_object_content=False
+                                                        collapse_outliner(override)
+                                                        bpy.app.timers.register(functools.partial(show_active,active_bone, active, override,area,filter_children,filter_content),first_interval=0.02)
+                                                    else:
+                                                        bpy.ops.outliner.show_active()
+                                        # area.spaces.active.use_filter_children=filter_children
+                                        # area.spaces.active.use_filter_object_content=filter_content
                                     # else:
                                     #     bpy.app.timers.register(functools.partial(show_active,active_bone, active, override,area,filter_children),first_interval=0.02)
                                 
@@ -255,8 +307,8 @@ def highlight_in_outliner():
 
 class AH_OT_Click_Bypass(bpy.types.Operator):
     bl_idname = "ah.clickbypass"
-    bl_label = "Select in Outliner"
-    bl_description = "Used to detect clicks in outliner to temporarily disable auto hightlight while you are in outliner."
+    bl_label = "在大纲视图中选择"
+    bl_description = "用于检测outliner中的单击以在outliner中临时禁用自动高光。"
     bl_options = {"REGISTER", "UNDO"}
 
     def invoke(self, context,event):
@@ -264,8 +316,8 @@ class AH_OT_Click_Bypass(bpy.types.Operator):
         return {'PASS_THROUGH'}
 class AH_OT_Click_Bypass_View3d(bpy.types.Operator):
     bl_idname = "ah.clickbypassview"
-    bl_label = "Select in Viewport"
-    bl_description = "Used to detect clicks in viewport to reenable auto hightlight after it was temporarily disabled when you clicked in outliner."
+    bl_label = "在视图中选择"
+    bl_description = "用于检测视口中的单击，以便在 “大纲视图” 中单击时暂时禁用自动显示后重新启用。"
     bl_options = {"REGISTER", "UNDO"}
 
     def invoke(self, context,event):
@@ -284,10 +336,9 @@ def drawIntoOutliner(self, context):
     if context.scene.auto_highlight_in_outliner:
         layout.prop(context.scene,'collapse_other_collections')
         if context.scene.collapse_other_collections and preferences().collapse_fix:
-            layout.label(text='Make sure you collapse all',icon='ERROR') 
-            layout.label(text='collections once using SHIFT+A')
-            layout.label(text='before using this.Press again if')
-            layout.label(text='collections expand instead of collapsing!')
+            layout.label(text='确保你折叠了所有',icon='ERROR') 
+            layout.label(text='集合使用了一次 SHIFT+A')
+            layout.label(text='如有以上,请重试')
     draw_update_section_for_panel(layout,context)
 def enabled(self,context):
     self.ah_state_set=True
@@ -326,12 +377,11 @@ def register():
         )
         addon_keymaps.append((km, kmi))
     bpy.types.OUTLINER_PT_filter.append(drawIntoOutliner)
-    bpy.types.Scene.auto_highlight_in_outliner= bpy.props.BoolProperty(default=True,name="Auto Highlight",update=enabled)
-    bpy.types.Scene.collapse_other_collections= bpy.props.BoolProperty(default=True,name="Collapse Other Collections")
-    bpy.types.Scene.auto_highlight_temp_disable=bpy.props.BoolProperty(default=False,name="Auto Highlight Temp Disable")
-    bpy.types.Scene.ah_state_set=bpy.props.BoolProperty(default=False,name="Auto Highlight State Set")
+    bpy.types.Scene.auto_highlight_in_outliner= bpy.props.BoolProperty(default=True,name="自动高亮显示",update=enabled)
+    bpy.types.Scene.collapse_other_collections= bpy.props.BoolProperty(default=True,name="折叠其他的集合")
+    bpy.types.Scene.auto_highlight_temp_disable=bpy.props.BoolProperty(default=False,name="自动突出显示 临时禁用")
+    bpy.types.Scene.ah_state_set=bpy.props.BoolProperty(default=False,name="自动突出显示状态设置")
     bpy.app.handlers.load_post.append(start_ah)
-    addon_update_checker.register("c3b0a36c72810a6b1837b8e0e4c0e55c")
     loadPreferences()
     # bpy.app.handlers.load_pre.append(stop_modal)
 from bpy.app.handlers import persistent
@@ -362,7 +412,6 @@ def unregister():
         bpy.app.handlers.load_post.remove(start_ah)
     except Exception:
         pass
-    addon_update_checker.unregister()
     # bpy.app.handlers.load_pre.clear()
 if __name__ == "__main__":
     register()

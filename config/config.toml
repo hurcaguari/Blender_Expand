@@ -11,7 +11,7 @@ retry_interval = 5
 
 [addons.utilities_gadget]
 path_type = "git"
-path = ""
+path = "https://github.com/hurcaguari/Blender-Utilities-Gadget"
 
 [addons.auto_highlight_in_outliner]
 path_type = "url"
@@ -22,29 +22,25 @@ path_type = "git"
 path = ""
 
 [addons.io_scene_max]
-path_type = "url"
-path = "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/io_scene_max.zip"
+path_type = "git"
+path = "https://github.com/nrgsille76/io_scene_max"
 
 [addons.mesh_looptools]
-path_type = "url"
-path = "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/looptools.zip"
+path_type = "git"
+path = "https://projects.blender.org/extensions/mesh_looptools"
 
-[addons.Quad_Remesher]
-path_type = "url"
-path = "https://raw.githubusercontent.com/hurcaguari/Blender_Expand/main/__release__/Quad_Remesher.zip"
+# [addons.Quad_Remesher]
+# path_type = "git"
+# path = ""
 
 [addons.LiquiFeel]
 path_type = "url"
 path = "http://blender4.com/add-ons/liquifeel/1.1.0/download/add-on-liquifeel-v1.1.0.zip"
 
-[addons.FlowProManager]
-path_type = "url"
-path = "http://blender4.com/add-ons/flowpromanager/4.1.0/download/add-on-flowpromanager-v4.1.0.zip"
+# [addons.FlowProManager]
+# path_type = "url"
+# path = "http://blender4.com/add-ons/flowpromanager/4.1.0/download/add-on-flowpromanager-v4.1.0.zip"
 
-[addons.FlaresWizard]
-path_type = "url"
-path = "http://blender4.com/add-ons/flareswizard/3.2.0/download/add-on-flareswizard-v3.2.0.zip"
-
-[addons.Miku_Miku_Rig]
-path_type = "git"
-path = ""
+# [addons.FlaresWizard]
+# path_type = "url"
+# path = "http://blender4.com/add-ons/flareswizard/3.2.0/download/add-on-flareswizard-v3.2.0.zip"
